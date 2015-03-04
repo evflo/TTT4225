@@ -53,16 +53,14 @@ int rand_gauss (float *x, int N) {
 }
 
 
-float* hammingWindow(int L){
+void hammingWindow(int L,float* ham){
     int i;
-    float ham[L];
     for (i = 0; i<L-1; i++) {
         ham[i] = 0.54-0.46*cos(2*3.14*(i/(L-1)));
     }
-    return ham;
 }
 
-float* autocorr(float* x){
+void autocorr(float* x,float* rx){
     const int N = sizeof(x);
     float y[2*N+1];
     int i,j,k,l;
@@ -79,26 +77,23 @@ float* autocorr(float* x){
             C[j] = C[j] + x[k]*x[k+j-1];
         }
     }
-    float r[N];
     for (l =0 ; l<N; l++) {
-        r[l] = C[l];
+        rx[l] = C[l];
     }
-    return r;
 }
 
-float* LevinsonDurbin(float* r,int P){
+void LevinsonDurbin(float* r,float* A,int P){
     
     float E = r[0];
     float b[P];
     float k[P];
-    float a[P];
     b[1] = 1;
     int i,j,l;
     for (i = 0; i<P; i++) {
         k[i] = r[i];
-        memset(a,0, i);
+        memset(A,0, i);
         
-        a[0] = 1;
+        A[0] = 1;
         for (j = 1; j<=i; j++) {
             k[i] = k[i]+b[j]*r[i-j+1];
         }
@@ -106,18 +101,17 @@ float* LevinsonDurbin(float* r,int P){
         k[i] = -k[i]/E;
         
         for (j=1; j<i; j++) {
-            a[j] = b[j] + k[i]*b[i-j+1];
+            A[j] = b[j] + k[i]*b[i-j+1];
         }
         a[i+1] = k[i];
         E = (1- abs(k[i])^2)*E;
-        for (l = 0; l<length(a); l++) {
-            b[l] = a[l];
+        for (l = 0; l<length(A); l++) {
+            b[l] = A[l];
         }
     }
-    return a;
     
 }
-float* findPitchAndVoice(y_pitch,Fs){
+void findPitchAndVoice(float* y_pitch,float pitchProperties,int Fs){
     
     int* ry = autocorr(&y_pitch);
     
@@ -150,11 +144,10 @@ float* findPitchAndVoice(y_pitch,Fs){
     }
     pitchPeriod = pitchPos + minima + pitchRange[0] - 3;
     pitchRatio = r_x(pitchPeriod+1)/ry(0);
-    float output[2] = {pitchPeriod pitchRatio};
-    return output;
+    pitchProperties[0] = pitchPeriod;
+    pitchProperties[1] = pitchRatio;
 }
-float* filtrate(int* B,int sizeB,int* A,int sizeA,float* x, int N){
-    float y[step];
+void filtrate(float* y,int* B,int sizeB,int* A,int sizeA,float* x, int N){
     memset(&y,0,sizeof(y));
     for (i = 0; i<step; i++) {
         for (j = 0; j<sizeA; j++) {
@@ -170,9 +163,9 @@ float* filtrate(int* B,int sizeB,int* A,int sizeA,float* x, int N){
         }
         y(i) = (1/A(0))*y(i);
     }
-    return y;
 }
-float* basicVocoder(float* data, int P){
+
+void basicVocoder(float* data,float* output, int P){
     int Fs = 16000;
     int Fc = 4000;
     

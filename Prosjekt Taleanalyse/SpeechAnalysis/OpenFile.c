@@ -20,7 +20,7 @@ int data[BUFSIZE];
 
 
 
-void readFile(const char* file){
+void readFile(float* count, const char* file){
     
     SNDFILE *infile;
     

@@ -11,7 +11,8 @@
 
 #include <stdio.h>
 
+float* basicVocoder(float* data,int P);
+
 #endif /* defined(__SpeechAnalysis__basicVocoder__) */
 
 
-float* basicVocoder(float* data,int P);

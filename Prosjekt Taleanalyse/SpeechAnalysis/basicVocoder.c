@@ -111,7 +111,7 @@ void LevinsonDurbin(float* r,float* A,int P){
     }
     
 }
-void findPitchAndVoice(float* y_pitch,float pitchProperties,int Fs){
+void findPitchAndVoice(float* y_pitch,float* pitchProperties,int Fs){
     
     int* ry = autocorr(&y_pitch);
     
@@ -175,8 +175,9 @@ void basicVocoder(float* data,float* output, int P){
     int beta= 0.1;
     const int length_data = sizeof(data);
     float pitch[length_data],noise[length_data],vocoderInput[length_data],synthezised[length_data];
-    float* windowSpeech = hammingWindow(0.03*Fs);
-    float* windowPitch = hammingWindow(0.05*Fs);
+    float windowSpeech[0.03*Fs],windowPitch[0.05];
+    hammingWindow(&windowSpeech,0.03*Fs);
+    hammingWindow(&windowPitch,0.05*Fs);
     memset(&pitch,0,sizeof(pitch));
     memset(&noise, 0, sizeof(noise));
     memset(&vocoderInput, 0, sizeof(vocoderInput));
@@ -197,12 +198,12 @@ void basicVocoder(float* data,float* output, int P){
         for (k = 0; k<nextPitch-lastPitch; k++) {
             y_pitch[k] = windowPitch[k]*data[k];
         }
-        
-        float* r_y = autocorr(y_filt);
-        
-        float* A = LevinsonDurbin(r_y,P);
-        
-        int* pitchProperties = findPitchAndVoice(y_filt,Fs);
+        float r_y[nextSpeech-lastSpeech];
+        autocorr(&r_y,y_filt);
+        float A[P];
+        LevinsonDurbin(r_y,&A,P);
+        float pitchProperties[2];
+        findPitchAndVoice(y_filt,&pitchProperties,Fs);
         
         if (pitchProperties[1] >= alpha){
             last = i+0.01*Fs-pitchPeriod-1;
@@ -228,11 +229,11 @@ void basicVocoder(float* data,float* output, int P){
                 vocoderInput[j] = 1;
             }
         }
-        float temp[step];
+        float temp[step],tempSynthesized[step];
         for (k = 0; k<0.02*Fs; k++) {
             temp[k] = vocoderInput[i-0.01*Fs+k];
         }
-        float tempSynthesized = filtrate(1,1,A,P,temp, step);
+        filtrate(tempSynthesized,1,1,A,P,temp, step);
         for (l = 0; l<step; l++) {
             synthezised[i-0.01*Fs+l] = tempSynthesized[l];
         }

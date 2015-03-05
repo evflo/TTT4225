@@ -1,12 +1,14 @@
 //
-//  signalProcessing.c
-//  SpeechAnalysis
+//  Signal Processing.c
+//  Speech Analysis C-code
 //
 //  Created by Even on 05/03/15.
 //  Copyright (c) 2015 Even. All rights reserved.
 //
 
-#include "signalProcessing.h"
+#include "SignalProcessing.h"
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

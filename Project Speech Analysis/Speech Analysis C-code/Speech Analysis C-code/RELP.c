@@ -1,6 +1,6 @@
 //
 //  RELP.c
-//  SpeechAnalysis
+//  Speech Analysis C-code
 //
 //  Created by Even on 05/03/15.
 //  Copyright (c) 2015 Even. All rights reserved.
@@ -56,7 +56,7 @@ void RELPcoder(float* data, float* output,int P){
         //Decimate speechError
         //Upsample speechError
         
-    
+        
     }
     
 }

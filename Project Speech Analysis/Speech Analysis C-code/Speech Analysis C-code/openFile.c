@@ -1,12 +1,12 @@
 //
-//  OpenFile.c
-//  SpeechAnalysis
+//  openFile.c
+//  Speech Analysis C-code
 //
-//  Created by Even on 02/03/15.
+//  Created by Even on 05/03/15.
 //  Copyright (c) 2015 Even. All rights reserved.
 //
 
-#include "OpenFile.h"
+#include "openFile.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

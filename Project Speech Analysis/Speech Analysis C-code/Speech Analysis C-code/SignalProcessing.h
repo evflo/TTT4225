@@ -1,13 +1,13 @@
 //
-//  signalProcessing.h
-//  SpeechAnalysis
+//  Signal Processing.h
+//  Speech Analysis C-code
 //
 //  Created by Even on 05/03/15.
 //  Copyright (c) 2015 Even. All rights reserved.
 //
 
-#ifndef __SpeechAnalysis__signalProcessing__
-#define __SpeechAnalysis__signalProcessing__
+#ifndef __Speech_Analysis_C_code__Signal_Processing__
+#define __Speech_Analysis_C_code__Signal_Processing__
 
 #include <stdio.h>
 
@@ -21,4 +21,4 @@ void hammingWindow(int L,float* ham);
 
 void autocorr(float* x,float* rx);
 
-#endif /* defined(__SpeechAnalysis__signalProcessing__) */
+#endif /* defined(__Speech_Analysis_C_code__Signal_Processing__) */

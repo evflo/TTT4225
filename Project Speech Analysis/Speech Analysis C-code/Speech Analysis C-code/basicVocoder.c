@@ -57,7 +57,8 @@ void basicVocoder(float* data,float* output, int P){
     int Fs = 16000;
     int Fc = 4000;
     
-    int N = 8, step = 0.02*Fs,halfStep = step/2, alpha = 0.5, beta= 0.1, speechLength = 0.03*Fs;
+    int N = 8, step = 0.02*Fs,halfStep = step/2,speechLength = 0.03*Fs;
+    float alpha = 0.5,beta = 0.1;
     int pitchLength;
     const int length_data = sizeof(data);
     float pitch[length_data],noise[length_data],vocoderInput[length_data],synthezised[length_data];

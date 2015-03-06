@@ -13,12 +13,12 @@
 #include <string.h>
 #include <math.h>
 
-#define filterOrden 8
 
 
 void RELPcoder(float* data, float* output,int P){
     
     const int N = sizeof(data);
+    int filterOrden = 8;
     int Fs = 16000;
     int Fc = 2000;
     int D = 4;

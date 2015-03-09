@@ -7,7 +7,7 @@
 //
 
 #include "basicVocoder.h"
-#include "signalProcessing.h"
+#include "SignalProcessing.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

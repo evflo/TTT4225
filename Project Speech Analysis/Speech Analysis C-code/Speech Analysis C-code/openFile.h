@@ -12,6 +12,6 @@
 #include <stdio.h>
 
 
-void readFile(float* count, const char* file);
+void readFile1(short* count, const char* file);
 
 #endif /* defined(__Speech_Analysis_C_code__openFile__) */

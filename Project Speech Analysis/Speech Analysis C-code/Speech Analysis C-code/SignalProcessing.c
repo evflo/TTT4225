@@ -14,7 +14,6 @@
 #include <string.h>
 #include <time.h>
 #include <math.h>
-#include <libsndfile.h>
 
 #define Fs 16000
 #define Fc 2000

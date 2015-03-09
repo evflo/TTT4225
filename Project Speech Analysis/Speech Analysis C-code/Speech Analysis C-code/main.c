@@ -39,7 +39,7 @@ int main(int argc, const char * argv[]) {
     fread(&dataSize,sizeof(DWORD),1,soundFile);
     
     soundData = (short*) calloc (dataSize/2,sizeof(short));
-    outputData = (float*) calloc(dataSize/2, sizeof(float));
+    outputData = (short*) calloc(dataSize/2, sizeof(float));
     fread(soundData,sizeof(short),dataSize/2,soundFile);
     fclose(soundFile);
     //Reading the .wav file.
@@ -64,7 +64,7 @@ int main(int argc, const char * argv[]) {
     
     fwrite(soundData,sizeof(short),dataSize/2,soundFile);
     
-    basicVocoder((float*)soundData, outputData, 14);
+    basicVocoder((float*)soundData,(float*) outputData, 14);
     
     
     fclose(soundFile);

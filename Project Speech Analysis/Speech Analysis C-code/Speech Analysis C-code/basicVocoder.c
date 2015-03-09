@@ -56,7 +56,7 @@ void findPitchAndVoice(float* y_pitch,float* pitchProperties,int Fs){
 void basicVocoder(float* data,float* output, int P){
     int Fs = 16000;
     int Fc = 4000;
-    
+    printf("Esel %i",Fc);
     int N = 8;
     int step = 0.02*Fs;
     int halfStep = step*0.5;
@@ -133,4 +133,8 @@ void basicVocoder(float* data,float* output, int P){
     //Lowpassfiltrate synthezised
     
     //output = synthesized
+    
+    for (i = 0; i<N; i++) {
+        output[i]= synthezised[i];
+    }
 }

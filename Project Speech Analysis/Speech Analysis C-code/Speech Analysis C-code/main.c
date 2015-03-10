@@ -11,8 +11,7 @@
 #include "basicVocoder.h"
 #include "RELP.h"
 int main(int argc, const char * argv[]) {
-    short* soundData;
-    float* outputData;
+    
     typedef unsigned char BYTE;
     typedef unsigned int DWORD;
     char* file = "/users/even_florenes/desktop/anvsb1.wav";
@@ -38,8 +37,8 @@ int main(int argc, const char * argv[]) {
     fread(&data,sizeof(BYTE),4,soundFile);
     fread(&dataSize,sizeof(DWORD),1,soundFile);
     
-    soundData = (short*) calloc (dataSize/2,sizeof(short));
-    outputData = (short*) calloc(dataSize/2, sizeof(float));
+    short* soundData = calloc (dataSize/2,sizeof(short));
+    short* outputData = calloc(dataSize/2, sizeof(short));
     fread(soundData,sizeof(short),dataSize/2,soundFile);
     fclose(soundFile);
     //Reading the .wav file.
@@ -64,7 +63,7 @@ int main(int argc, const char * argv[]) {
     
     fwrite(soundData,sizeof(short),dataSize/2,soundFile);
     
-    basicVocoder((float*)soundData,(float*) outputData, 14);
+    //basicVocoder((float*)soundData,(float*) outputData, 14);
     
     
     fclose(soundFile);

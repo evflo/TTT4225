@@ -154,11 +154,21 @@ void basicVocoder(float* data,int length_data, int P, char** filterFiles){
 
 	}
 
-	//filtprog
-
-	//output = synthesized
 
 	for (i = 0; i<length_data; i++) {
 		data[i]= synthezised[i];
 	}
+
+	//filtprog
+	FILE *dataFile;
+
+	dataFile = fopen(filterFiles[1],"wb");
+	fwrite(data,sizeof(float),length_data,dataFile);
+
+	filtProg(filterFiles);
+	fclose(dataFile);
+	dataFile = fopen(filterFiles[2],"rb");
+	fread(data,sizeof(float),length_data,dataFile);
+
+	fclose(dataFile);
 }

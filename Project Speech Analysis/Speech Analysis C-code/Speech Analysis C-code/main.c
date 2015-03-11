@@ -62,7 +62,7 @@ int main(int argc, const char * argv[]) {
 	}
 
 
-	basicVocoder(y,dataSize/2,14);
+	basicVocoder(y,dataSize/2,14,argv);
 
 
 	//Writing the .wav file

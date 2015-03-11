@@ -16,10 +16,9 @@
 */
 
 
-#include <sndfile.h>
 
 #define ARRAY_LEN(x)	((int) (sizeof (x) / sizeof (x [0])))
 #define MAX(x,y)		((x) > (y) ? (x) : (y))
 #define MIN(x,y)		((x) < (y) ? (x) : (y))
 
-sf_count_t sfx_mix_mono_read_double (SNDFILE * file, double * data, sf_count_t datalen) ;
+sf_count_t sfx_mix_mono_read_double (FILE * file, double * data, sf_count_t datalen) ;

@@ -66,75 +66,83 @@ void hammingWindow(int L,float* ham){
     }
 }
 
-void autocorr(float* x,float* rx){
-    const int N = sizeof(x);
-    float y[2*N+1];
+void autocorr(float* x,int lengthx,float* rx){
+
+    float y[2*lengthx+1];
     int i,j,k,l;
-    for (i = 0; i<2*N+1; i++) {
-        if (i<N) {
+    for (i = 0; i<2*lengthx+1; i++) {
+        if (i<lengthx) {
             y[i] = x[i];
         }else{
             y[i] = 0;
         }
     }
-    int C[N];
-    for (j=0; j<N; j++) {
-        for (k=0; k<N; k++) {
-            C[j] = C[j] + x[k]*x[k+j-1];
+    float C[lengthx];
+    for (j=0; j<lengthx; j++) {
+        for (k=0; k<lengthx; k++) {
+            C[j] +=  y[k]*y[k+j];
         }
     }
-    for (l =0 ; l<N; l++) {
+    for (l =0 ; l<lengthx; l++) {
         rx[l] = C[l];
     }
 }
 
 void LevinsonDurbin(float* r,float* A,int P){
     
-    float E = r[0];
-    float b[P];
-    float k[P];
-    b[1] = 1;
+    double* b = (double*) calloc(P,sizeof(double));
+    double* k = (double*) calloc(P,sizeof(double));
+    double E = r[0];
     int i,j,l;
-    for (i = 0; i<P; i++) {
-        k[i] = r[i];
-        memset(A,0, i);
-        
-        A[0] = 1;
-        for (j = 1; j<=i; j++) {
-            k[i] = k[i]+b[j]*r[i-j+1];
+    memset(A,0,P);
+    A[0] = 1;
+    b[0] = 1;
+    for (i = 1; i<=P; i++) {
+        k[i] = 0.0;
+
+    
+        for (j = 1; j<=i-1; j++) {
+            k[i] += b[j]*r[i-j];
+
         }
         
-        k[i] = -k[i]/E;
-        
-        for (j=1; j<i; j++) {
-            A[j] = b[j] + k[i]*b[i-j+1];
+        k[i] = (r[i]-k[i])/E;
+        A[i] = (float)k[i];
+        for (j=1; j<=i-1; j++) {
+            A[j] = (float)b[j] - (float)k[i]*(float)b[i-j];
         }
-        A[i+1] = k[i];
-        E = (1- abs(k[i])^2)*E;
-        
         for (l = 0; l<P; l++) {
             b[l] = A[l];
+            
         }
-    }
-    
-}
+        E = (1- k[i]*k[i])*E;
 
-void filtrate(float* y,float* B,int sizeB,float* A,int sizeA,float* x){
-    int i,j,k,l;
-    
-    memset(&y,0,sizeof(y));
-    for (i = 0; i<step; i++) {
-        for (j = 0; j<sizeA; j++) {
-            for (k= 0; k<sizeB; k++) {
-                for (l = 0; l<i; l++) {
-                    if (l== 0){
-                        y[i] += B[l]*x[i-l];
-                    }else{
-                        y[i] += B[l]*x[i-l]-A[l]*y[i-l];
-                    }
-                }
-            }
-        }
-        y[i] = (1/A[0])*y[i];
     }
+    for(i = 1; i<= P;i++){
+        A[i]= -A[i];
+    }
+
+}
+void filtrate(float* x,float* B,int sizeB,float* A,int sizeA){
+	int i,j,k,l;
+	int y_length = step;
+	float y[y_length];
+
+	for (i = 0; i<step; i++) {
+		for (j = 0; j<sizeA; j++) {
+	    		for (k= 0; k<sizeB; k++) {
+
+	       			if (k <= i){
+		   			y[i] += B[k]*x[i-k];
+				}
+				if (j <= i){
+					y[i] -= A[j]*y[i-j];
+				}
+			}		
+		}
+		y[i] = (1/A[0])*y[i];
+	}
+	for (l = 0; l<step;l++){
+		x[l] = y[l];
+	}
 }

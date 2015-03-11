@@ -28,7 +28,7 @@ int main(int argc, const char * argv[]) {
 
 	//Reading the .wav file.
 	if((soundFile = fopen(file,"rb"))== NULL){
-	perror("Error");
+		perror("Failed to open file for reading");
 	}
 	fread(&id,sizeof(BYTE),4,soundFile);
 	fread(&size,sizeof(DWORD),1,soundFile);
@@ -50,14 +50,13 @@ int main(int argc, const char * argv[]) {
 	fclose(soundFile);
 	//Reading the .wav file.
 	
-	//basicVocoder(,(int) dataSize/2, 14);
 
 	int wav_length = dataSize/2;
-	int step = 0.02*16000;
+	int step = 0.020*16000;
 	float y[wav_length];
 	int i;
 	float gain = 1.0/32760.0;
-	for (i=0;i<dataSize/2;i++){
+	for (i=1;i<wav_length;i++){
 	
 		y[i] = (float) soundData[i]*gain;
 	}
@@ -69,11 +68,9 @@ int main(int argc, const char * argv[]) {
 	//Writing the .wav file
 	soundFile = fopen(outFile,"wb");
 	if (soundFile == NULL){
-		perror("Failed write\n");
+		perror("Failed to open file to be written to");
 	}
-	printf("test3\n");
 	fwrite(&id,sizeof(BYTE),4,soundFile);
-	printf("test4\n");
 	fwrite(&size,sizeof(DWORD),1,soundFile);
 	fwrite(&id2,sizeof(BYTE),4,soundFile);
 	fwrite(&id3,sizeof(BYTE),4,soundFile);

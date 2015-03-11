@@ -90,35 +90,39 @@ void autocorr(float* x,int lengthx,float* rx){
 
 void LevinsonDurbin(float* r,float* A,int P){
     
-    float E = r[0];
-    float b[P];
-    float k[P];
-    b[1] = 1;
+    double* b = (double*) calloc(P,sizeof(double));
+    double* k = (double*) calloc(P,sizeof(double));
+    double E = r[0];
     int i,j,l;
-    for (i = 0; i<P; i++) {
-        k[i] = r[i];
-        memset(A,0, i);
-        
-        A[0] = 1;
-        for (j = 1; j<=i; j++) {
-            k[i] = k[i]+b[j]*r[i-j+1];
+    memset(A,0,P);
+    A[0] = 1;
+    b[0] = 1;
+    for (i = 1; i<=P; i++) {
+        k[i] = 0.0;
+
+    
+        for (j = 1; j<=i-1; j++) {
+            k[i] += b[j]*r[i-j];
+
         }
         
-        k[i] = -k[i]/E;
-        
-        for (j=1; j<i; j++) {
-            A[j] = b[j] + k[i]*b[i-j+1];
+        k[i] = (r[i]-k[i])/E;
+        A[i] = (float)k[i];
+        for (j=1; j<=i-1; j++) {
+            A[j] = (float)b[j] - (float)k[i]*(float)b[i-j];
         }
-        A[i+1] = k[i];
-        E = (1- abs(k[i])^2)*E;
-        
         for (l = 0; l<P; l++) {
             b[l] = A[l];
+            
         }
-    }
-    
-}
+        E = (1- k[i]*k[i])*E;
 
+    }
+    for(i = 1; i<= P;i++){
+        A[i]= -A[i];
+    }
+
+}
 void filtrate(float* x,float* B,int sizeB,float* A,int sizeA){
 	int i,j,k,l;
 	int y_length = step;

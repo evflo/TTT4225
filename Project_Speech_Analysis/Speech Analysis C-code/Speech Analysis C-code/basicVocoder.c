@@ -16,7 +16,7 @@
 
 
 void findPitchAndVoice(float* y_pitch,int pitchLength,float* pitchProperties,int Fs){
-    printf("Input findPitch: %f %f %f\n", y_pitch[0], y_pitch[1], y_pitch[2]); 
+    //printf("Input findPitch: %f %f %f\n", y_pitch[0], y_pitch[1], y_pitch[2]); 
     int N = floor(0.02*Fs)-floor(0.002*Fs);
     float ry[pitchLength];
     autocorr(y_pitch,pitchLength, ry);
@@ -27,14 +27,13 @@ void findPitchAndVoice(float* y_pitch,int pitchLength,float* pitchProperties,int
 	pitchFrame[m] = ry[i];
 	m++;
     }
-    printf("%f %f %f\n", pitchFrame[0], pitchFrame[1], pitchFrame[2]);
-    printf("%f %f %f\n", ry[0], ry[1], ry[2]);
+    
     int foundMinima = 0;
     for (j = 0; j<N; j++) {
         if (pitchFrame[j] <= 0) {
             minima= j;
             foundMinima = 1;
-	    printf("Found minima, %d\n", minima);
+	   // printf("Found minima, %d\n", minima);
             break;
         }
     }
@@ -58,6 +57,7 @@ void findPitchAndVoice(float* y_pitch,int pitchLength,float* pitchProperties,int
 
 
 void basicVocoder(float* data,int length_data, int P){
+	//Defining constant variables
 	int Fs = 16000;
 	int Fc = 4000;
 	int N = 8;
@@ -66,58 +66,61 @@ void basicVocoder(float* data,int length_data, int P){
 	int speechLength = 0.03*Fs;
 	float alpha = 0.5,beta = 0.1;
 	int pitchLength = 0.05*Fs;
-
-	float pitch[length_data],noise[length_data],vocoderInput[length_data],synthezised[length_data], pitchProperties[2],randNoise[step];
-	float B[1] = {1};
-	float windowSpeech[speechLength],windowPitch[pitchLength],temp[step];
-	float y_filt[speechLength],y_pitch[pitchLength],r_y[speechLength],A[P];
-	hammingWindow(speechLength,windowSpeech);
-
-	hammingWindow(pitchLength,windowPitch);
-
-
-	memset(&pitch,0,sizeof(pitch));
-	memset(&noise, 0, sizeof(noise));
-	memset(&vocoderInput, 0, sizeof(vocoderInput));
-	memset(&synthezised, 0, sizeof(synthezised));
-
+	int end = length_data-0.025*Fs;
+	//Defining changing variables
 	int last = 1;
 	int lastPulse = 1;
-
-	int i,j,k,l,m;
-	int test = length_data-0.025*Fs;
 	int lastSpeech, nextSpeech, lastPitch, nextPitch;
-	printf("%d, %d\n", length_data, speechLength);
-	for (i = Fs*0.03; i<length_data-0.025*Fs; i= i+step) {
+	int i,j,k,l,m;
+	//Defining array that will be processed
+	float* pitch = (float*) calloc(length_data,sizeof(float));
+	float* noise = (float*) calloc(length_data,sizeof(float));
+	float* vocoderInput = (float*) calloc(length_data,sizeof(float));
+	float* synthezised = (float*) calloc(length_data,sizeof(float));
+	float* pitchProperties = (float*) calloc(2,sizeof(float));
+	float* randNoise = (float*) calloc(step,sizeof(float));
+	float* windowSpeech = (float*) calloc(speechLength,sizeof(float));
+	float* windowPitch = (float*) calloc(pitchLength,sizeof(float));
+	float* vocoderInputSample = (float*) calloc(step,sizeof(float));
+	float* yFiltrated = (float*) calloc(speechLength,sizeof(float));
+	float* yPitch = (float*) calloc(pitchLength,sizeof(float));
+	float* ry = (float*) calloc(speechLength,sizeof(float));
+	float* A = (float*) calloc(P,sizeof(float));
+	float B[1] = {1};
+	//Making the Hamming Windows for speech and pitch
+	hammingWindow(speechLength,windowSpeech);
+	hammingWindow(pitchLength,windowPitch);
+	
+
+	
+	for (i = Fs*0.03; i<end; i= i+step) {
 
 		lastSpeech = i+1-0.015*Fs;
 		nextSpeech = i+0.015*Fs;
 		lastPitch = i+1-0.025*Fs;
 		nextPitch = i+0.025*Fs;
-		printf("1\n");
+
 
 		for (j = 0; j<nextSpeech-lastSpeech; j++) {
-		    y_filt[j] = windowSpeech[j]*data[lastSpeech+j];
+		    yFiltrated[j] = windowSpeech[j]*data[lastSpeech+j];
 		}
-		printf("2\n");
+			
 		for (k = 0; k<nextPitch-lastPitch; k++) {
-		    y_pitch[k] = windowPitch[k]*data[lastPitch+k];
+		    yPitch[k] = windowPitch[k]*data[lastPitch+k];
 		}
+		
+		autocorr(yFiltrated,speechLength,ry);
 
 
-		printf("3\n");
-		autocorr(y_filt,speechLength,r_y);
+		LevinsonDurbin(ry,A,P);
+		
+		findPitchAndVoice(yPitch,pitchLength,pitchProperties,Fs);
 
-		printf("4\n");
-		LevinsonDurbin(r_y,A,P);
-
-		findPitchAndVoice(y_pitch,pitchLength,pitchProperties,Fs);
-		printf("5, voiced: %f\n", pitchProperties[1]);
 		if (pitchProperties[1] >= alpha){
-		    printf("5if\n");
+
 		    last = i+0.01*Fs-pitchProperties[0]-1;
-		    printf("5iflast\n");
-		    printf("%d, %f\n", lastPulse, pitchProperties[0]);
+
+
 		    for (m = lastPulse; m<i+0.01*Fs; m = m+pitchProperties[0]){
 
 			pitch[m] = 1;
@@ -125,34 +128,27 @@ void basicVocoder(float* data,int length_data, int P){
 			    lastPulse = m;
 			//}
 		    }
-		    printf("5iffor\n");
+
 		}else{
-		    printf("5else\n");
+
 		    lastPulse = i+0.01*Fs;
 
 		    rand_gauss(randNoise,step);
 		    
 		    for (l = 0; l<step; l++) {
 			noise[i-halfStep+l] = beta*randNoise[l];
+			vocoderInput[i-halfStep+l] = pitch[i-halfStep+l] + noise[i-halfStep+l];
+			if (vocoderInput[i-halfStep+l] > 1){
+		    	vocoderInput[i-halfStep+l] = 1;
+		    }
+		    vocoderInputSample[l] = vocoderInput[i-halfStep+l];
 		    }
 		    
 		}
-		printf("6\n");
-		for (j = 0; j<length_data; j++) {
-		    vocoderInput[j] = pitch[j] + noise[j];
-		    if(vocoderInput[j] >= 1){
-			vocoderInput[j] = 1;
-		    }
-		}
+		filtrate(vocoderInputSample,B,1,A,P);
 
-		for (k = 0; k<0.02*Fs; k++) {
-		    temp[k] = vocoderInput[i-halfStep+k];
-		}
-
-		filtrate(temp,B,1,A,P);
-		printf("7\n");
 		for (l = 0; l<step; l++) {
-		    synthezised[i-halfStep+l] = temp[l];
+		    synthezised[i-halfStep+l] = vocoderInputSample[l];
 		}
 
 	}
@@ -161,7 +157,7 @@ void basicVocoder(float* data,int length_data, int P){
 
 	//output = synthesized
 
-	for (i = 0; i<N; i++) {
+	for (i = 0; i<length_data; i++) {
 		data[i]= synthezised[i];
 	}
 }

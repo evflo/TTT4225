@@ -85,7 +85,7 @@ int filtProg(char ** txtfiles)
 
 static void fir_filter (SNDFILE * infile, SNDFILE * outfile, char * firfile)
 {	double buffer [BUFSIZE], obuf[BUFSIZE] ;
-	sf_count_t count, cnt ;
+	//sf_count_t count, cnt ;
 	float *h, *mem;
 	int i, n, nt=0,  m, N, Nuse;
 	FILE *fid;

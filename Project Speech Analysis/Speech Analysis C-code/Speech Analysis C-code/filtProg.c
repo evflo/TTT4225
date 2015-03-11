@@ -39,54 +39,6 @@ static void fir_filter (SNDFILE * infile, SNDFILE * outfile, char * firfile) ;
 #define COEFFS "lpcoeff.txt"
 #define BUFSIZE 1024
 
-int main (int argc, char ** argv)
-{
-	SNDFILE *infile, *outfile ;
-	SF_INFO sfinfo ;
-	char * firfile = COEFFS;
-	
-	if ((argc != 4) && (argc != 3))
-		usage_exit () ;
-	
-	if (strcmp (argv [1], argv [2]) == 0)
-	{	printf ("Error : input and output file names are the same.\n") ;
-		exit (1) ;
-	} ;
-	if (argc == 4) {
-		firfile = argv[argc -1];
-	}
-	
-	/* Delete the output file if it already exists. */
-	remove (argv [2]) ;
-	
-	/* Allocate and initialize memory, and open the input and output file */
-	memset (&sfinfo, 0, sizeof (sfinfo)) ;
-	if ((infile = sf_open (argv [1], SFM_READ, &sfinfo)) == NULL)
-	{	printf ("Error : Not able to open input file '%s'\n", argv [1]) ;
-		sf_close (infile) ;
-		exit (1) ;
-	} ;
-	
-    /* If the source is stereo, inform that it will be mixed down to mono */ 
-	if (sfinfo.channels != 1)
-	{	printf ("Input file '%s' not mono. Will mix to single channel.\n", argv [1]) ;
-	} ;
-	
-	
-	if ((outfile = sf_open (argv [2], SFM_WRITE, &sfinfo)) == NULL)
-	{	printf ("Error : Not able to open output file '%s'\n", argv [2]) ;
-		sf_close (infile) ;
-		exit (1) ;
-	} ;
-	
-    /* Do the filtering */
-	fir_filter (infile, outfile, firfile) ;
-	
-	sf_close (infile) ;
-	sf_close (outfile) ;
-	
-	return 0 ;
-} /* main */
 
 static void fir_filter (SNDFILE * infile, SNDFILE * outfile, char * firfile)
 {	double buffer [BUFSIZE], obuf[BUFSIZE] ;
@@ -140,3 +92,46 @@ static void usage_exit (void)
 		  ) ;
 	exit (0) ;
 } /* usage_exit */
+
+
+int filtProg(char ** txtfiles)
+{
+	SNDFILE *infile, *outfile ;
+	SF_INFO sfinfo ;
+	char * firfile = COEFFS;
+	
+	if (strcmp (txtfiles [1], txtfiles [2]) == 0)
+	{	printf ("Error : input and output file names are the same.\n") ;
+		exit (1) ;
+	} ;
+	
+	
+	
+	/* Allocate and initialize memory, and open the input and output file */
+	memset (&sfinfo, 0, sizeof (sfinfo)) ;
+	if ((infile = sf_open (txtfiles [1], SFM_READ, &sfinfo)) == NULL)
+	{	printf ("Error : Not able to open input file '%s'\n", txtfiles [1]) ;
+		sf_close (infile) ;
+		exit (1) ;
+	} ;
+	
+    /* If the source is stereo, inform that it will be mixed down to mono */ 
+	if (sfinfo.channels != 1)
+	{	printf ("Input file '%s' not mono. Will mix to single channel.\n", txtfiles [1]) ;
+	} ;
+	
+	
+	if ((outfile = sf_open (txtfiles [2], SFM_WRITE, &sfinfo)) == NULL)
+	{	printf ("Error : Not able to open output file '%s'\n", txtfiles [2]) ;
+		sf_close (infile) ;
+		exit (1) ;
+	} ;
+	
+    /* Do the filtering */
+	fir_filter (infile, outfile, firfile) ;
+	
+	sf_close (infile) ;
+	sf_close (outfile) ;
+	
+	return 0 ;
+} /* main */

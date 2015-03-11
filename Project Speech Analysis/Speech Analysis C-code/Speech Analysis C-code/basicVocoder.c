@@ -8,6 +8,7 @@
 
 #include "basicVocoder.h"
 #include "SignalProcessing.h"
+#include "filtProg.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -56,7 +57,7 @@ void findPitchAndVoice(float* y_pitch,int pitchLength,float* pitchProperties,int
 }
 
 
-void basicVocoder(float* data,int length_data, int P){
+void basicVocoder(float* data,int length_data, int P, char** filterFiles){
 	//Defining constant variables
 	int Fs = 16000;
 	int Fc = 4000;
@@ -153,7 +154,7 @@ void basicVocoder(float* data,int length_data, int P){
 
 	}
 
-	//Lowpassfiltrate synthezised
+	//filtprog
 
 	//output = synthesized
 

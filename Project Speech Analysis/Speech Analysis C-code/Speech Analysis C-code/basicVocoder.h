@@ -11,7 +11,7 @@
 
 #include <stdio.h>
 
-void basicVocoder(float* data,int length_data,int P, char** filterFiles);
+void basicVocoder(float* data,float* output,int length_data,int P, char** filterFiles);
 
 
 #endif /* defined(__Speech_Analysis_C_code__basicVocoder__) */

@@ -89,12 +89,13 @@ void autocorr(float* x,int lengthx,float* rx){
 }
 
 void LevinsonDurbin(float* r,float* A,int P){
-    
-    double* b = (double*) calloc(P,sizeof(double));
-    double* k = (double*) calloc(P,sizeof(double));
-    double E = r[0];
+    float* b;
+    float* k;
+    b = (float*) calloc(P+1,sizeof(float));
+    k = (float*) calloc(P+1,sizeof(float));
+    float E = r[0];
     int i,j,l;
-    memset(A,0,P);
+    memset(A,0,P*sizeof(float));
     A[0] = 1;
     b[0] = 1;
     for (i = 1; i<=P; i++) {
@@ -113,7 +114,7 @@ void LevinsonDurbin(float* r,float* A,int P){
         }
         for (l = 0; l<P; l++) {
             b[l] = A[l];
-            
+                 
         }
         E = (1- k[i]*k[i])*E;
 
@@ -121,7 +122,8 @@ void LevinsonDurbin(float* r,float* A,int P){
     for(i = 1; i<= P;i++){
         A[i]= -A[i];
     }
-
+    free(b);
+    free(k);
 }
 void filtrate(float* x,float* B,int sizeB,float* A,int sizeA){
 	int i,j,k,l;
@@ -171,4 +173,29 @@ void upsample(float *xDec, float *x, int N, int D){
 			c++;
 		}
 	}
+}
+
+
+void firFilter (double *coeff, int Ncoeffs,
+               double *x, double *xFiltred, int n)
+{
+  int i, j, k;
+  double tmp;
+
+  for (k = 0; k < n; k++)  //  position in output
+  {
+    tmp = 0;
+
+    for (i = 0; i < Ncoeffs; i++)  //  position in coefficients array
+    {
+      j = k - i;  //  position in input
+
+      if (j >= 0)  //  bounds check for input buffer
+      {
+        tmp += coeff[k] * x[j];
+      }
+    }
+
+    xFiltred[i] = tmp;
+  }
 }

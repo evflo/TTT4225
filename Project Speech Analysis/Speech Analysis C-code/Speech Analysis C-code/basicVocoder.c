@@ -57,7 +57,7 @@ void findPitchAndVoice(float* y_pitch,int pitchLength,float* pitchProperties,int
 }
 
 
-void basicVocoder(float* data,int length_data, int P, char** filterFiles){
+void basicVocoder(float* data,float* output,int length_data, int P){
 	//Defining constant variables
 	int Fs = 16000;
 	int Fc = 4000;
@@ -160,15 +160,8 @@ void basicVocoder(float* data,int length_data, int P, char** filterFiles){
 	}
 
 	//filtprog
-	FILE *dataFile;
+	firFilter(coeff,N,data,output, length_data);
 
-	dataFile = fopen(filterFiles[1],"wb");
-	fwrite(data,sizeof(float),length_data,dataFile);
-
-	filtProg(filterFiles);
-	fclose(dataFile);
-	dataFile = fopen(filterFiles[2],"rb");
-	fread(data,sizeof(float),length_data,dataFile);
-
-	fclose(dataFile);
+	free(yPitch), free(yFiltrated), free(synthezised), free(vocoderInputSample), free(vocoderInput);
+	free(pitch), free(pitchProperties), free(windowPitch), free(windowSpeech),free(ry),free(randNoise),free(A);
 }

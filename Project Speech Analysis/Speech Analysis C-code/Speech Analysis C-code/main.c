@@ -50,8 +50,9 @@ int main(int argc, const char * argv[]) {
 	fclose(soundFile);
 	//Reading the .wav file.
 	
-
 	int wav_length = dataSize/2;
+	float y[wav_length];
+	/*
 	int step = 0.020*16000;
 	float y[step],r[step],A[14];
 	int i;
@@ -62,14 +63,17 @@ int main(int argc, const char * argv[]) {
 	}
 	autocorr(y,step,r);
 	LevinsonDurbin(r,A,14);
-	//basicVocoder(y,dataSize/2,14,argv);
 	for (i = 0; i < 14; ++i)
 	{
-	/* code */
+	
 
 		printf("%.9g ",A[i]);
 	}
 	printf("\n\n");
+	*/
+	float output[wav_length];
+	basicVocoder(y,output,dataSize/2,14);
+
 	//Writing the .wav file
 	soundFile = fopen(outFile,"wb");
 	if (soundFile == NULL){

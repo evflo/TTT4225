@@ -15,12 +15,7 @@
 #include <time.h>
 #include <math.h>
 
-#define Fs 16000
-#define Fc 2000
-//#define D 4
-#define low_P 4
-#define filterOrden 8
-#define step Fs*0.02
+
 
 int rand_gauss (float *x, int N){
     /* Create Gaussian N(0,1) distributed numbers from uniformly distributed numbers using */
@@ -128,6 +123,7 @@ void LevinsonDurbin(float* r,float* A,int P){
 }
 void filtrate(float* x,float* B,int sizeB,float* A,int sizeA,float* y){
 	int i,j,k,l;
+    int step = 0.02*16000;
 	for (i = 0; i<step; i++) {
 		for (j = 0; j<sizeA; j++) {
 	    		for (k= 0; k<sizeB; k++) {

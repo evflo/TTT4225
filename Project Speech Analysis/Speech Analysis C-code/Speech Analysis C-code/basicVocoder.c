@@ -8,7 +8,6 @@
 
 #include "basicVocoder.h"
 #include "SignalProcessing.h"
-#include "filtProg.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -80,6 +79,7 @@ void basicVocoder(float* data,float* output,int length_data, int P){
 	float* windowSpeech = (float*) calloc(speechLength,sizeof(float));
 	float* windowPitch = (float*) calloc(pitchLength,sizeof(float));
 	float* vocoderInputSample = (float*) calloc(step,sizeof(float));
+	float* vocoderInputSampleFilt = (float*) calloc(step,sizeof(float));
 	float* yFiltrated = (float*) calloc(speechLength,sizeof(float));
 	float* yPitch = (float*) calloc(pitchLength,sizeof(float));
 	float* ry = (float*) calloc(speechLength,sizeof(float));
@@ -89,7 +89,7 @@ void basicVocoder(float* data,float* output,int length_data, int P){
 	hammingWindow(speechLength,windowSpeech);
 	hammingWindow(pitchLength,windowPitch);
 	
-
+	float coeff[9] = {0, -0.0277, 0, 0.274,0.4974, 0.274, 0, -0.0227, 0};
 	
 	for (i = Fs*0.03; i<end; i= i+step) {
 
@@ -111,6 +111,8 @@ void basicVocoder(float* data,float* output,int length_data, int P){
 
 
 		LevinsonDurbin(ry,A,P);
+		printf("hello\n");
+
 		
 		findPitchAndVoice(yPitch,pitchLength,pitchProperties,Fs);
 
@@ -141,10 +143,10 @@ void basicVocoder(float* data,float* output,int length_data, int P){
 		    }
 		    
 		}
-		filtrate(vocoderInputSample,B,1,A,P);
+		filtrate(vocoderInputSample,B,1,A,P, vocoderInputSampleFilt);
 
 		for (l = 0; l<step; l++) {
-		    synthezised[i-halfStep+l] = vocoderInputSample[l];
+		    synthezised[i-halfStep+l] = vocoderInputSampleFilt[l];
 		}
 
 	}
@@ -156,7 +158,8 @@ void basicVocoder(float* data,float* output,int length_data, int P){
 
 	//filtprog
 	firFilter(coeff,N,data,output, length_data);
+//	free(yPitch),free(yFiltrated),free(synthezised),free(vocoderInputSample),free(vocoderInput),free(vocoderInputSampleFilt);
+//	free(pitch),free(pitchProperties),free(windowPitch),free(windowSpeech),free(ry),free(randNoise),free(A);
 
-	free(yPitch), free(yFiltrated), free(synthezised), free(vocoderInputSample), free(vocoderInput);
-	free(pitch), free(pitchProperties), free(windowPitch), free(windowSpeech),free(ry),free(randNoise),free(A);
 }
+

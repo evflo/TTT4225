@@ -29,17 +29,34 @@ void RELPcoder(float* data, float* output,int P, const int length_data, int choi
     int speechLength = 0.03*Fs;
     int pitchLength = 0.05*Fs;
     int start = 0.005*Fs;
-    float syntheticError[length_data],syntheticSpeechUpsampled[length_data],syntheticSpeechHF[length_data];
-    float windowSpeech[speechLength]; 
-    float dataDecimated[speechLength/D]; 
-    float speechFilt[speechLength],speechEst[speechLength],speechError[speechLength],speechErrorFilt[speechLength];
-    float ryLF[speechLength],ryHF[speechLength];
-    float A[P],A_low[low_P];
+    float* syntheticError,syntheticSpeechUpsampled,syntheticSpeechHF, windowSpeech, dataDecimated; 
+    float* speechFilt,speechEst,speechError,speechErrorFilt, ryLF,ryHF;
+    float* A,A_low;
     float B[1] = {1};
-    float HFexcitation[speechLength], HFexcitationFilt[speechLength],HFexcitationLP[speechLength],LFexcitation[speechLength];
-    float syntheticFullbandResidual[speechLength], speechUpsampling[speechLength],speechAlgorithm[speechLength];
+    float* HFexcitation, HFexcitationFilt,HFexcitationLP,LFexcitation;
+    float* syntheticFullbandResidual, speechUpsampling,speechAlgorithm;
     hammingWindow(windowSpeech,speechLength);
 
+    syntheticError = (float*) calloc(length_data,sizeof(float));
+    syntheticSpeechUpsampled = (float*) calloc(length_data,sizeof(float));
+    syntheticSpeechHF = (float*) calloc(length_data,sizeof(float));
+    windowSpeech = (float*) calloc(speechLength,sizeof(float));
+    dataDecimated = (float*) calloc(speechLength/D,sizeof(float));
+    speechFilt = (float*) calloc(speechLength,sizeof(float));
+    speechEst = (float*) calloc(speechLength,sizeof(float));
+    speechError = (float*) calloc(speechLength,sizeof(float));
+    speechErrorFilt = (float*) calloc(speechLength,sizeof(float));
+    ryLF = (float*) calloc(speechLength,sizeof(float));
+    ryHF = (float*) calloc(speechLength,sizeof(float));
+    A = (float*) calloc(P,sizeof(float));
+    A_low = (float*) calloc(low_P,sizeof(float));
+    HFexcitation = (float*) calloc(speechLength,sizeof(float));
+    HFexcitationFilt = (float*) calloc(speechLength,sizeof(float));
+    HFexcitationLP = (float*) calloc(speechLength,sizeof(float));
+    LFexcitation = (float*) calloc(speechLength,sizeof(float));
+    syntheticFullbandResidual = (float*) calloc(speechLength,sizeof(float));
+    speechUpsampling = (float*) calloc(speechLength,sizeof(float));
+    speechAlgorithm = (float*) calloc(speechLength,sizeof(float));
     //Make filters
     float gainLF, gainHF, gain;
     int i,j;
@@ -116,4 +133,10 @@ void RELPcoder(float* data, float* output,int P, const int length_data, int choi
     }    
     
     //SNR
+
+    free(syntheticError),free(syntheticSpeechUpsampled),free(syntheticSpeechHF),free(windowSpeech);
+    free(dataDecimated), free(speechFilt), free(speechEst),free(speechError),free(speechErrorFilt);
+    free(ryLF),free(ryHF),free(A),free(A_low),free(HFexcitation),free(HFexcitationFilt);
+    free(HFexcitationLP),free(LFexcitation),free(syntheticFullbandResidual),free(speechUpsampling);
+    free(speechAlgorithm);
 }

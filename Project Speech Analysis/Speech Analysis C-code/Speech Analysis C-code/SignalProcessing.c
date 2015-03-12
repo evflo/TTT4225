@@ -125,11 +125,8 @@ void LevinsonDurbin(float* r,float* A,int P){
     free(b);
     free(k);
 }
-void filtrate(float* x,float* B,int sizeB,float* A,int sizeA){
+void filtrate(float* x,float* B,int sizeB,float* A,int sizeA,float* y){
 	int i,j,k,l;
-	int y_length = step;
-	float y[y_length];
-
 	for (i = 0; i<step; i++) {
 		for (j = 0; j<sizeA; j++) {
 	    		for (k= 0; k<sizeB; k++) {
@@ -143,9 +140,6 @@ void filtrate(float* x,float* B,int sizeB,float* A,int sizeA){
 			}		
 		}
 		y[i] = (1/A[0])*y[i];
-	}
-	for (l = 0; l<step;l++){
-		x[l] = y[l];
 	}
 }
 
@@ -176,11 +170,14 @@ void upsample(float *xDec, float *x, int N, int D){
 }
 
 
-void firFilter (double *coeff, int Ncoeffs,
-               double *x, double *xFiltred, int n)
+//Takes in a set of Ncoeffs filter coefficents and filters the input x
+//Output xFiltred is the filtered x
+
+void firFilter (float *coeff, int Ncoeffs,
+               float *x, float *xFiltred, int n)
 {
   int i, j, k;
-  double tmp;
+  float tmp;
 
   for (k = 0; k < n; k++)  //  position in output
   {

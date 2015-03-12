@@ -14,8 +14,6 @@
 #include <string.h>
 #include <math.h>
 
-
-
 void findPitchAndVoice(float* y_pitch,int pitchLength,float* pitchProperties,int Fs){
     //printf("Input findPitch: %f %f %f\n", y_pitch[0], y_pitch[1], y_pitch[2]); 
     int N = floor(0.02*Fs)-floor(0.002*Fs);
@@ -55,7 +53,6 @@ void findPitchAndVoice(float* y_pitch,int pitchLength,float* pitchProperties,int
     pitchProperties[0] = pitchPeriod;
     pitchProperties[1] = pitchRatio;
 }
-
 
 void basicVocoder(float* data,float* output,int length_data, int P){
 	//Defining constant variables
@@ -124,10 +121,8 @@ void basicVocoder(float* data,float* output,int length_data, int P){
 
 		    for (m = lastPulse; m<i+0.01*Fs; m = m+pitchProperties[0]){
 
-			pitch[m] = 1;
-			//if (m > last){
-			    lastPulse = m;
-			//}
+				pitch[m] = 1;
+				lastPulse = m;
 		    }
 
 		}else{

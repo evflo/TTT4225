@@ -10,5 +10,5 @@
 #define __Speech_Analysis_C_code__RELP__
 
 #include <stdio.h>
-void RELPcoder(float *data, float *output, int P, const int lengthData);
+void RELPcoder(float *data, float *output, int P, const int lengthData,int choice);
 #endif /* defined(__Speech_Analysis_C_code__RELP__) */

@@ -21,4 +21,8 @@ void hammingWindow(int L,float* ham);
 
 void autocorr(float* x,int lengthx,float* rx);
 
+void decimate(float *x, float *xDec, int N, int D);
+
+void upsample(float *xDec, float *x, int N, int D);
+
 #endif /* defined(__Speech_Analysis_C_code__Signal_Processing__) */

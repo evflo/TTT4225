@@ -15,18 +15,20 @@
 
 
 
-void RELPcoder(float* data, float* output,int P){
+void RELPcoder(float* data, float* output,int P, const int N){
     
-    const int N = sizeof(data);
+    //const int N = sizeof(data);
     int filterOrden = 8;
     int Fs = 16000;
     int Fc = 2000;
     int D = 4;
     int low_P = 4;
     int step = 0.02*Fs;
+    int windowLength = 0.03*Fs;
     int halfStep = step/2;
     float syntheticError[N],syntheticSpeechUpsampled[N],syntheticSpeechHF[N];
-    float windowSpeech[step];
+    float windowSpeech[step]; //Feil størrelse
+    float dataDecimated[step/D]; //Feil størrelse
     
     
     //Make filters
@@ -36,7 +38,7 @@ void RELPcoder(float* data, float* output,int P){
         int lastSpeech = i+1-0.015*Fs;
         int nextSpeech = i+0.015*Fs;
         int j;
-        float speechFilt[step];
+        float speechFilt[step]; //Best å gjøre utafor for-løkka?
         for (j = lastSpeech; j<nextSpeech; j++) {
             speechFilt[j]= windowSpeech[j]*data[lastSpeech+j];
         }
@@ -54,7 +56,9 @@ void RELPcoder(float* data, float* output,int P){
         
         //Filtrate speechError
         //Decimate speechError
+        decimate(data, dataDecimated, s, D); //Feil input
         //Upsample speechError
+        upsample(dataDecimated, data, N, D); //Feil input
         
         
     }

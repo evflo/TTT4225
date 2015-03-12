@@ -146,3 +146,29 @@ void filtrate(float* x,float* B,int sizeB,float* A,int sizeA){
 		x[l] = y[l];
 	}
 }
+
+//Takes a signal x of length N, downsamples the signal with a factor D,
+//and puts the output in xDec of length N/D.
+void decimate(float *x, float *xDec, int N, int D){
+	int i;
+	int c = 0;
+	for (i = 0; i < N; i += D){
+		xDec[c] = x[i];
+		c++;
+	}
+}
+
+//Takes a signal xDec of length N/D, upsamples the signal with a factor D,
+//and puts the output in x of length N.
+void upsample(float *xDec, float *x, int N, int D){
+	int i;
+	int c = 0;
+	for (i = 0; i < N; i++){
+		if (i%D){
+			x[i] = 0;
+		}else{
+			x[i] = xDec[c];
+			c++;
+		}
+	}
+}

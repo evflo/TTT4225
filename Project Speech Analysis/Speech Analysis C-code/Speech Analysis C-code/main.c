@@ -53,18 +53,23 @@ int main(int argc, const char * argv[]) {
 
 	int wav_length = dataSize/2;
 	int step = 0.020*16000;
-	float y[wav_length];
+	float y[step],r[step],A[14];
 	int i;
 	float gain = 1.0/32760.0;
-	for (i=1;i<wav_length;i++){
+	for (i=1;i<step;i++){
 	
 		y[i] = (float) soundData[i]*gain;
 	}
+	autocorr(y,step,r);
+	LevinsonDurbin(r,A,14);
+	//basicVocoder(y,dataSize/2,14,argv);
+	for (i = 0; i < 14; ++i)
+	{
+	/* code */
 
-
-	basicVocoder(y,dataSize/2,14,argv);
-
-
+		printf("%.9g ",A[i]);
+	}
+	printf("\n\n");
 	//Writing the .wav file
 	soundFile = fopen(outFile,"wb");
 	if (soundFile == NULL){

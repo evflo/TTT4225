@@ -17,7 +17,7 @@
 
 #define Fs 16000
 #define Fc 2000
-#define D 4
+//#define D 4
 #define low_P 4
 #define filterOrden 8
 #define step Fs*0.02

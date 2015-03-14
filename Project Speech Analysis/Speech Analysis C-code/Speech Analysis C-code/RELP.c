@@ -8,6 +8,7 @@
 
 #include "RELP.h"
 #include "signalProcessing.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -58,8 +59,10 @@ void RELPcoder(float* data, float* output,int P, const int length_data, int choi
     speechUpsampling = (float*) calloc(speechLength,sizeof(float));
     speechAlgorithm = (float*) calloc(speechLength,sizeof(float));
     //Make filters
+    float coeffLow[9] = {0, -0.0277, 0, 0.274,0.4974, 0.274, 0, -0.0227, 0};
+    float coeffHigh[9] = {0, -0.0161, -0.086, -0.1948, 0.7501, -0.1948, -0.0860, -0.0161, 0};
     float gainLF, gainHF, gain;
-    int i,j;
+    int i,j,filtering;
     for (i=0.03*Fs; i<N-0.025*Fs; i+= step) {
         int lastSpeech = i+1-0.015*Fs;
         int nextSpeech = i+0.015*Fs;
@@ -98,8 +101,11 @@ void RELPcoder(float* data, float* output,int P, const int length_data, int choi
         autocorr(LFexcitation,speechLength,ryLF);
         LevinsonDurbin(ry,A_low,low_P)
 
-        filtrate(HFexcitation,B,1,A_low,low_P,HFexcitationLP);
-
+        filtering = filtrate(HFexcitation,speechLength,B,1,A_low,low_P,HFexcitationLP);
+        if(filtering == -1){
+            printf("Filtrate function failed: Size of A smaller than 1\n");
+            return;
+        }
         firFilter(coeffHigh,filterOrden,HFexcitationLP,HFexcitationFilt);
         gainHF = 0;
         gainLF = 0;
@@ -117,8 +123,16 @@ void RELPcoder(float* data, float* output,int P, const int length_data, int choi
             HFexcitationFilt[j] = gain*HFexcitationFilt[j];
             syntheticFullbandResidual[j] = LFexcitation[j] + HFexcitationFilt[j];
         }
-        filtrate(speechError,B,1,A,P,speechUpsampling);
-        filtrate(syntheticFullbandResidual,B,1,A,P,speechAlgorithm);
+        filtering = filtrate(speechError,speechLength,B,1,A,P,speechUpsampling);
+        if(filtering == -1){
+            printf("Filtrate function failed: Size of A smaller than 1\n");
+            return;
+        }
+        filtering = filtrate(syntheticFullbandResidual,speechLength,B,1,A,P,speechAlgorithm);
+        if(filtering == -1){
+            printf("Filtrate function failed: Size of A smaller than 1\n");
+            return;
+        }
         for (j = 0; j< speechLength; j++){
             syntheticSpeechUpsampled[i+j-halfStep] = speechUpsampling[j+start];
             syntheticSpeechHF[i+j-halfStep] = speechAlgorithm[j+start];

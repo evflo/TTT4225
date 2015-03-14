@@ -9,10 +9,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include "openFile.h"
 #include "basicVocoder.h"
 #include "RELP.h"
 #include "SignalProcessing.h"
+
+
 int main(int argc, const char * argv[]) {
 	//short* soundData;
 	//short* outputData;
@@ -50,8 +51,14 @@ int main(int argc, const char * argv[]) {
 	fclose(soundFile);
 	//Reading the .wav file.
 	
-	int wav_length = dataSize/2;
+	int wav_length = 4;
 	float y[wav_length];
+	y[0] = 1;
+	y[1] = 0;
+	y[2] = 1;
+	y[3] = 0; 
+	float A[1] = {-1};
+	float B[1] = {1};
 	/*
 	int step = 0.020*16000;
 	float y[step],r[step],A[14];
@@ -72,7 +79,12 @@ int main(int argc, const char * argv[]) {
 	printf("\n\n");
 	*/
 	float output[wav_length];
-	basicVocoder(y,output,dataSize/2,14);
+	//basicVocoder(y,output,dataSize/2,14);
+	rand_gauss(y,wav_length);
+	int i;
+	for (i = 0; i < wav_length; i++){
+		printf("%f\n",y[i]);
+	}
 
 	//Writing the .wav file
 	soundFile = fopen(outFile,"wb");

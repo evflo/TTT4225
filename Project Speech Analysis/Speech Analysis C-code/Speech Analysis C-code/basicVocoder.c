@@ -13,45 +13,6 @@
 #include <string.h>
 #include <math.h>
 
-void findPitchAndVoice(float* y_pitch,int pitchLength,float* pitchProperties,int Fs){
-    //printf("Input findPitch: %f %f %f\n", y_pitch[0], y_pitch[1], y_pitch[2]); 
-    int N = floor(0.02*Fs)-floor(0.002*Fs);
-    float ry[pitchLength];
-    autocorr(y_pitch,pitchLength, ry);
-    int i,j,minima = 0;
-    float pitchFrame[N];
-    int m = 0;
-    for (i = floor(0.002*Fs); i<floor(0.02*Fs); i++) {
-	pitchFrame[m] = ry[i];
-	m++;
-    }
-    
-    int foundMinima = 0;
-    for (j = 0; j<N; j++) {
-        if (pitchFrame[j] <= 0) {
-            minima= j;
-            foundMinima = 1;
-	   // printf("Found minima, %d\n", minima);
-            break;
-        }
-    }
-    if(foundMinima == 0){
-        minima = N;
-    }
-    
-    int k,pitchPos = 0;
-    int max = 0;
-    for (k = minima; k<N; k++) {
-        if (max< pitchFrame[k]) {
-            pitchPos = k;
-            max = pitchFrame[k];
-        }
-    }
-    int pitchPeriod = pitchPos + minima + 0.002*Fs - 3;
-    float pitchRatio = ry[pitchPeriod+1]/ry[0];
-    pitchProperties[0] = pitchPeriod;
-    pitchProperties[1] = pitchRatio;
-}
 
 void basicVocoder(float* data,float* output,int length_data, int P){
 	//Defining constant variables
@@ -67,7 +28,7 @@ void basicVocoder(float* data,float* output,int length_data, int P){
 	//Defining changing variables
 	int last = 1;
 	int lastPulse = 1;
-	int lastSpeech, nextSpeech, lastPitch, nextPitch;
+	int lastSpeech, nextSpeech, lastPitch, nextPitch,filtering;
 	int i,j,k,l,m;
 	//Defining array that will be processed
 	float* pitch = (float*) calloc(length_data,sizeof(float));
@@ -89,7 +50,7 @@ void basicVocoder(float* data,float* output,int length_data, int P){
 	hammingWindow(speechLength,windowSpeech);
 	hammingWindow(pitchLength,windowPitch);
 	
-	float coeff[9] = {0, -0.0277, 0, 0.274,0.4974, 0.274, 0, -0.0227, 0};
+	float lowCoeff[9] = {0, -0.0277, 0, 0.274,0.4974, 0.274, 0, -0.0227, 0};
 	
 	for (i = Fs*0.03; i<end; i= i+step) {
 
@@ -111,7 +72,6 @@ void basicVocoder(float* data,float* output,int length_data, int P){
 
 
 		LevinsonDurbin(ry,A,P);
-		printf("hello\n");
 
 		
 		findPitchAndVoice(yPitch,pitchLength,pitchProperties,Fs);
@@ -143,8 +103,11 @@ void basicVocoder(float* data,float* output,int length_data, int P){
 		    }
 		    
 		}
-		filtrate(vocoderInputSample,B,1,A,P, vocoderInputSampleFilt);
-
+		filtering = filtrate(vocoderInputSample,step,B,1,A,P, vocoderInputSampleFilt);
+		if(filtering == -1){
+			printf("Filtrate function failed: Size of A smaller than 1\n");
+			return;
+		}
 		for (l = 0; l<step; l++) {
 		    synthezised[i-halfStep+l] = vocoderInputSampleFilt[l];
 		}
@@ -157,7 +120,7 @@ void basicVocoder(float* data,float* output,int length_data, int P){
 	}
 
 	//filtprog
-	firFilter(coeff,N,data,output, length_data);
+	firFilter(lowCoeff,N,data,output, length_data);
 //	free(yPitch),free(yFiltrated),free(synthezised),free(vocoderInputSample),free(vocoderInput),free(vocoderInputSampleFilt);
 //	free(pitch),free(pitchProperties),free(windowPitch),free(windowSpeech),free(ry),free(randNoise),free(A);
 

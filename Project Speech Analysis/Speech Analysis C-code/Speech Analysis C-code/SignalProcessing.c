@@ -121,23 +121,27 @@ void LevinsonDurbin(float* r,float* A,int P){
     free(b);
     free(k);
 }
-void filtrate(float* x,float* B,int sizeB,float* A,int sizeA,float* y){
+int filtrate(float* x,int lengthx,float* B,int sizeB,float* A,int sizeA,float* y){
 	int i,j,k,l;
-    int step = 0.02*16000;
-	for (i = 0; i<step; i++) {
-		for (j = 0; j<sizeA; j++) {
-	    		for (k= 0; k<sizeB; k++) {
+    if (sizeA > 1){
+    	for (i = 0; i<lengthx; i++) {
+    		for (j = 1; j<sizeA; j++) {
+    	    		for (k= 0; k<sizeB; k++) {
 
-	       			if (k <= i){
-		   			y[i] += B[k]*x[i-k];
-				}
-				if (j <= i){
-					y[i] -= A[j]*y[i-j];
-				}
-			}		
-		}
-		y[i] = (1/A[0])*y[i];
-	}
+    	       			if (k <= i){
+    		   			y[i] += B[k]*x[i-k];
+    				}
+    				if (j <= i){
+    					y[i] -= A[j]*y[i-j];
+    				}
+    			}		
+    		}
+    		y[i] = (1/A[0])*y[i];
+    	}
+    }else{
+        return -1;
+    }
+    return 0;
 }
 
 //Takes a signal x of length N, downsamples the signal with a factor D,
@@ -192,4 +196,44 @@ void firFilter (float *coeff, int Ncoeffs,
 
     xFiltred[i] = tmp;
   }
+}
+
+void findPitchAndVoice(float* y_pitch,int pitchLength,float* pitchProperties,int Fs){
+    //printf("Input findPitch: %f %f %f\n", y_pitch[0], y_pitch[1], y_pitch[2]); 
+    int N = floor(0.02*Fs)-floor(0.002*Fs);
+    float ry[pitchLength];
+    autocorr(y_pitch,pitchLength, ry);
+    int i,j,minima = 0;
+    float pitchFrame[N];
+    int m = 0;
+    for (i = floor(0.002*Fs); i<floor(0.02*Fs); i++) {
+    pitchFrame[m] = ry[i];
+    m++;
+    }
+    
+    int foundMinima = 0;
+    for (j = 0; j<N; j++) {
+        if (pitchFrame[j] <= 0) {
+            minima= j;
+            foundMinima = 1;
+       // printf("Found minima, %d\n", minima);
+            break;
+        }
+    }
+    if(foundMinima == 0){
+        minima = N;
+    }
+    
+    int k,pitchPos = 0;
+    int max = 0;
+    for (k = minima; k<N; k++) {
+        if (max< pitchFrame[k]) {
+            pitchPos = k;
+            max = pitchFrame[k];
+        }
+    }
+    int pitchPeriod = pitchPos + minima + 0.002*Fs - 3;
+    float pitchRatio = ry[pitchPeriod+1]/ry[0];
+    pitchProperties[0] = pitchPeriod;
+    pitchProperties[1] = pitchRatio;
 }

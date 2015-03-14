@@ -90,7 +90,7 @@ void basicVocoder(float* data,float* output,int length_data, int P){
 		if (pitchProperties[1] >= alpha){
 
 		    last = i+0.01*Fs-pitchProperties[0]-1;
-
+		    printf("Pitch period: %g\n", pitchProperties[0]);
 
 		    for (m = lastPulse; m<i+0.01*Fs; m = m+pitchProperties[0]){
 

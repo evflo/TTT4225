@@ -78,7 +78,7 @@ void autocorr(float* x,int lengthx,float* rx){
             y[i] = 0;
         }
     }
-    float C[lengthx];
+    float *C = (float *) calloc(lengthx, sizeof(float));
     for (j=0; j<lengthx; j++) {
         for (k=0; k<lengthx; k++) {
             C[j] +=  y[k]*y[k+j];
@@ -87,6 +87,7 @@ void autocorr(float* x,int lengthx,float* rx){
     for (l =0 ; l<lengthx; l++) {
         rx[l] = C[l];
     }
+    free(C);
 }
 
 
@@ -221,6 +222,7 @@ void findPitchAndVoice(float* y_pitch,int pitchLength,float* pitchProperties,int
     int foundMinima = 0;
     for (j = 0; j<N; j++) {
         if (pitchFrame[j] <= 0) {
+            printf("%g, %g\n", pitchFrame[j], ry[0]);
             minima= j;
             foundMinima = 1;
        // printf("Found minima, %d\n", minima);
@@ -230,7 +232,6 @@ void findPitchAndVoice(float* y_pitch,int pitchLength,float* pitchProperties,int
     if(foundMinima == 0){
         minima = N;
     }
-    
     int k,pitchPos = 0;
     int max = 0;
     for (k = minima; k<N; k++) {
@@ -239,6 +240,7 @@ void findPitchAndVoice(float* y_pitch,int pitchLength,float* pitchProperties,int
             max = pitchFrame[k];
         }
     }
+    printf("%d, %d\n", minima, pitchPos);
     int pitchPeriod = pitchPos + minima + 0.002*Fs - 3;
     float pitchRatio = ry[pitchPeriod+1]/ry[0];
     pitchProperties[0] = pitchPeriod;

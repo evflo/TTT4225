@@ -20,12 +20,14 @@ int main(int argc, const char * argv[]) {
 
 	typedef unsigned char BYTE;
 	typedef unsigned int DWORD;
+	char* file;
+	char* outFile;
 	if (argv[1] == "sanntid"){
-		char* file = "/home/evenflo/Documents/TTT4240/Project Speech Analysis/anvsb1.wav";
-		char* outFile = "/home/evenflo/Documents/TTT4240/Project Speech Analysis/basic.wav";
+		file = "/home/evenflo/Documents/TTT4240/Project Speech Analysis/anvsb1.wav";
+		outFile = "/home/evenflo/Documents/TTT4240/Project Speech Analysis/basic.wav";
 	}else if (argv[1] == "even"){
-		char* file = "mac-plass";
-		char* outfile = "mac-plass ut";
+		file = "mac-plass";
+		outFile = "mac-plass ut";
 	}else{
 		printf("Husk argument.\n");
 		return;

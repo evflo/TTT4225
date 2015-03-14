@@ -12,9 +12,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <time.h>
 
 
 void basicVocoder(float* data,float* output,int length_data, int P){
+	srand(time(NULL));
 	//Defining constant variables
 	int Fs = 16000;
 	int Fc = 4000;
@@ -63,15 +65,26 @@ void basicVocoder(float* data,float* output,int length_data, int P){
 		for (j = 0; j<nextSpeech-lastSpeech; j++) {
 		    yFiltrated[j] = windowSpeech[j]*data[lastSpeech+j];
 		}
-			
+		if ((i == Fs*0.03+Fs*0.02*3) || (i == Fs*0.03+Fs*0.02*15) || (i == Fs*0.03+Fs*0.02*30)){
+			printf("yFiltrated, i = %d:\n", i);
+			printf("%g, %g, %g\n", yFiltrated[0], yFiltrated[100], yFiltrated[300]);
+		}
 		for (k = 0; k<nextPitch-lastPitch; k++) {
 		    yPitch[k] = windowPitch[k]*data[lastPitch+k];
 		}
 		
 		autocorr(yFiltrated,speechLength,ry);
-
+		if ((i == Fs*0.03+Fs*0.02*3) || (i == Fs*0.03+Fs*0.02*15) || (i == Fs*0.03+Fs*0.02*30)){
+			printf("autocorr, i = %d:\n", i);
+			printf("%g, %g, %g\n", ry[0], ry[100], ry[300]);
+		}
 		LevinsonDurbin(ry,A,P);
-		
+		if ((i == Fs*0.03+Fs*0.02*3) || (i == Fs*0.03+Fs*0.02*15) || (i == Fs*0.03+Fs*0.02*30)){
+			printf("Levinson, A, i = %d:\n", i);
+			for (j = 0; j < P; j++){
+				printf("%f\n", A[j]);
+			}
+		}
 		findPitchAndVoice(yPitch,pitchLength,pitchProperties,Fs);
 
 		if (pitchProperties[1] >= alpha){
@@ -90,7 +103,12 @@ void basicVocoder(float* data,float* output,int length_data, int P){
 		    lastPulse = i+0.01*Fs;
 
 		    rand_gauss(randNoise,step);
-		    
+		    if ((i == Fs*0.03+Fs*0.02*3) || (i == Fs*0.03+Fs*0.02*15) || (i == Fs*0.03+Fs*0.02*30)){
+				printf("randNoise, A, i = %d:\n", i);
+				printf("%g, %g, %g\n", randNoise[0], randNoise[100], randNoise[300]);
+
+				
+			}
 		    for (l = 0; l<step; l++) {
 			noise[i-halfStep+l] = beta*randNoise[l];
 			vocoderInput[i-halfStep+l] = pitch[i-halfStep+l] + noise[i-halfStep+l];
@@ -113,11 +131,25 @@ void basicVocoder(float* data,float* output,int length_data, int P){
 	}
 
 	for (i = 0; i<length_data; i++) {
-		data[i]= synthezised[i];
+		data[i]= synthezised[i]; //Should be data
 	}
-
+	printf("Before filtrate: %g %g %g\n",vocoderInput[1000],vocoderInput[5000],vocoderInput[10000]);
 	//filtprog
+	printf("Data before FIR and after filtrate: %g, %g, %g\n", data[1000], data[5000], data[10000]);
 	firFilter(lowCoeff,N,data,output, length_data);
+	printf("Output after FIR: %g, %g, %g\n", output[1000], output[5000], output[10000]);
+	
+	float maxVal = 0;
+	for (i = 0; i < length_data; i++){
+		if (abs(output[i]) > maxVal){
+			maxVal = abs(output[i]);
+		}
+	}
+	for (i = 0; i < length_data; i++){
+		output[i] = output[i] / maxVal;
+	}
+printf("Output after FIR and first gain adjustment: %g, %g, %g\n", output[1000], output[5000], output[10000]);
+
 //	free(yPitch),free(yFiltrated),free(synthezised),free(vocoderInputSample),free(vocoderInput),free(vocoderInputSampleFilt);
 //	free(pitch),free(pitchProperties),free(windowPitch),free(windowSpeech),free(ry),free(randNoise),free(A);
 

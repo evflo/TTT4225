@@ -27,7 +27,7 @@ int rand_gauss (float *x, int N){
     M=N/2;
     
     // Initialize uniform number generator
-    srand(time(NULL));
+    
     
     // Loop - each iteration generates two Gaussian numbers
     for (i=0; i<M; i++){
@@ -129,13 +129,14 @@ void LevinsonDurbin(float* r,float* A,int P){
 }
 int filtrate(float* x,int lengthx,float* B,int sizeB,float* A,int sizeA,float* y){
 	int i,j,k,l;
+    memset(y,0,lengthx*sizeof(float));
     if (sizeA > 1){
     	for (i = 0; i<lengthx; i++) {
     		for (j = 1; j<sizeA; j++) {
-    	    		for (k= 0; k<sizeB; k++) {
+	    		for (k= 0; k<sizeB; k++) {
 
-    	       			if (k <= i){
-    		   			y[i] += B[k]*x[i-k];
+	       			if (k <= i){
+		   			    y[i] += B[k]*x[i-k];
     				}
     				if (j <= i){
     					y[i] -= A[j]*y[i-j];
@@ -196,11 +197,11 @@ void firFilter (float *coeff, int Ncoeffs,
 
       if (j >= 0)  //  bounds check for input buffer
       {
-        tmp += coeff[k] * x[j];
+        tmp += coeff[i] * x[j];
       }
     }
 
-    xFiltred[i] = tmp;
+    xFiltred[k] = tmp;
   }
 }
 
@@ -213,8 +214,8 @@ void findPitchAndVoice(float* y_pitch,int pitchLength,float* pitchProperties,int
     float pitchFrame[N];
     int m = 0;
     for (i = floor(0.002*Fs); i<floor(0.02*Fs); i++) {
-    pitchFrame[m] = ry[i];
-    m++;
+        pitchFrame[m] = ry[i];
+        m++;
     }
     
     int foundMinima = 0;

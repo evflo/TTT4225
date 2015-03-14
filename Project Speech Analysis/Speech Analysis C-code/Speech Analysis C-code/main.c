@@ -66,19 +66,26 @@ int main(int argc, const char * argv[]) {
 	
 	int wav_length = dataSize/2;
 	float y[wav_length];
-	
 	//int step = 0.020*16000;
 	//float y[step],r[step],A[14];
 
 	
-	//int step = 0.020*16000;
-	//float y[step],r[step],A[14];
+	int step = 0.020*16000;
+	//float r[step],A[14];
+	float ytest[step];
+
 	int i;
-	float gain = 1.0/32760.0;
+	float gainDown = 1.0/32760.0;
 	for (i=1;i<wav_length;i++){
 	
-		y[i] = (float) soundData[i]*gain;
+		y[i] = (float) soundData[i]*gainDown;
+		if(i<step){
+			ytest[i] =(float) soundData[i]*gainDown;
+		}
 	}
+	printf("Input ints: %d, %d, %d\n", soundData[1000], soundData[5000], soundData[10000]);
+	printf("convert to float: %g, %g, %g\n", y[1000], y[5000], y[10000]);
+
 	/*autocorr(y,step,r);
 	LevinsonDurbin(r,A,14);
 	for (i = 0; i < 14; ++i)
@@ -90,15 +97,23 @@ int main(int argc, const char * argv[]) {
 	printf("\n\n");
 	*/
 	float output[wav_length];
+	//basicVocoder(y,output,dataSize/2,14);
+	//rand_gauss(y,wav_length);
 	basicVocoder(y,output,dataSize/2,14);
-	/*rand_gauss(y,wav_length);
-	basicVocoder(y,output,dataSize/2,14);
+	/*
 	hammingWindow(y,wav_length);
 	int i;
 	for (i = 0; i < wav_length; i++){
 		printf("%f\n",y[i]);
 	}*/
 
+	float gainUp = 32760.0;
+	float tmp;
+	for(i=0;i<wav_length;i++){
+		tmp = output[i]*gainUp;
+		soundData[i] = (short) tmp; //should be output instead of y
+	}
+	printf("Output after gain: %d, %d, %d\n", soundData[1000], soundData[5000], soundData[10000]);
 	//Writing the .wav file
 	soundFile = fopen(outFile,"wb");
 	if (soundFile == NULL){
@@ -118,7 +133,7 @@ int main(int argc, const char * argv[]) {
 	fwrite(&data,sizeof(BYTE),4,soundFile);
 	fwrite(&dataSize,sizeof(DWORD),1,soundFile);
 
-	fwrite(output,sizeof(short),dataSize/2,soundFile);
+	fwrite(soundData,sizeof(short),dataSize/2,soundFile);
 	
 
 

@@ -148,8 +148,8 @@ void basicVocoder(float* data,float* output,int length_data, int P){
 	}
 printf("Output after FIR and first gain adjustment: %g, %g, %g\n", output[1000], output[5000], output[10000]);
 
-//	free(yPitch),free(yFiltrated),free(synthezised),free(vocoderInputSample),free(vocoderInput),free(vocoderInputSampleFilt);
-//	free(pitch),free(pitchProperties),free(windowPitch),free(windowSpeech),free(ry),free(randNoise),free(A);
+	free(yPitch),free(yFiltrated),free(synthezised),free(vocoderInputSample),free(vocoderInput),free(vocoderInputSampleFilt);
+	free(pitch),free(pitchProperties),free(windowPitch),free(windowSpeech),free(ry),free(randNoise),free(A);
 
 }
 

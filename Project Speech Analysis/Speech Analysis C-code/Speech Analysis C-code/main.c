@@ -33,7 +33,7 @@ int main(int argc, const char * argv[]) {
 		file = "/home/benjamsf/Documents/TTT4240/Project Speech Analysis/anvsb1.wav";
 		outFile = "/home/benjamsf/Documents/TTT4240/Project Speech Analysis/basic.wav";
 	}else{
-		printf("Husk argument, %s\n", argv[1]);
+		printf("Husk argument%s\n");
 		return;
 	}
 	FILE *soundFile;

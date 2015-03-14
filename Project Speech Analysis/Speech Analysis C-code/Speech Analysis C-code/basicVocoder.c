@@ -49,7 +49,7 @@ void basicVocoder(float* data,float* output,int length_data, int P){
 	//Making the Hamming Windows for speech and pitch
 	hammingWindow(windowSpeech,speechLength);
 	hammingWindow(windowPitch,pitchLength);
-	
+
 	float lowCoeff[9] = {0, -0.0277, 0, 0.274,0.4974, 0.274, 0, -0.0227, 0};
 	
 	for (i = Fs*0.03; i<end; i= i+step) {
@@ -70,9 +70,7 @@ void basicVocoder(float* data,float* output,int length_data, int P){
 		
 		autocorr(yFiltrated,speechLength,ry);
 
-
 		LevinsonDurbin(ry,A,P);
-
 		
 		findPitchAndVoice(yPitch,pitchLength,pitchProperties,Fs);
 
@@ -113,7 +111,6 @@ void basicVocoder(float* data,float* output,int length_data, int P){
 		}
 
 	}
-
 
 	for (i = 0; i<length_data; i++) {
 		data[i]= synthezised[i];

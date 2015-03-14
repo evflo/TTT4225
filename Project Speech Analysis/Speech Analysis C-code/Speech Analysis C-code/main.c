@@ -20,8 +20,16 @@ int main(int argc, const char * argv[]) {
 
 	typedef unsigned char BYTE;
 	typedef unsigned int DWORD;
-	char* file = "/home/parallels/Desktop/anvsb1.wav";
-	char* outFile = "home/parallels/Desktop/basicVocoder.wav";
+	if (argv[1] == "sanntid"){
+		char* file = "/home/evenflo/Documents/TTT4240/Project Speech Analysis/anvsb1.wav";
+		char* outFile = "/home/evenflo/Documents/TTT4240/Project Speech Analysis/basic.wav";
+	}else if (argv[1] == "even"){
+		char* file = "mac-plass";
+		char* outfile = "mac-plass ut";
+	}else{
+		printf("Husk argument.\n");
+		return;
+	}
 	FILE *soundFile;
 	BYTE id[4],id2[4],id3[4],data[4];
 	DWORD size,formatSize,sampleRate,bytesPerSec,dataSize;
@@ -48,28 +56,27 @@ int main(int argc, const char * argv[]) {
 	short* soundData =  calloc (dataSize/2,sizeof(short));
 	//short* outputData =  calloc(dataSize/2, sizeof(short));
 	fread(soundData,sizeof(short),dataSize/2,soundFile);
-	fclose(soundFile);
+	if (fclose(soundFile) != 0){
+		perror("Failed to close file\n");
+	}
 	//Reading the .wav file.
 	
-	int wav_length = 4;
+	int wav_length = dataSize/2;
 	float y[wav_length];
-	y[0] = 0;
-	y[1] = 0;
-	y[2] = 0;
-	y[3] = 0;
 	
-	float A[1] = {-1};
-	float B[1] = {1};
-	/*
-	int step = 0.020*16000;
-	float y[step],r[step],A[14];
+	//int step = 0.020*16000;
+	//float y[step],r[step],A[14];
+
+	
+	//int step = 0.020*16000;
+	//float y[step],r[step],A[14];
 	int i;
 	float gain = 1.0/32760.0;
-	for (i=1;i<step;i++){
+	for (i=1;i<wav_length;i++){
 	
 		y[i] = (float) soundData[i]*gain;
 	}
-	autocorr(y,step,r);
+	/*autocorr(y,step,r);
 	LevinsonDurbin(r,A,14);
 	for (i = 0; i < 14; ++i)
 	{
@@ -80,12 +87,14 @@ int main(int argc, const char * argv[]) {
 	printf("\n\n");
 	*/
 	float output[wav_length];
-	//basicVocoder(y,output,dataSize/2,14);
+	basicVocoder(y,output,dataSize/2,14);
+	/*rand_gauss(y,wav_length);
+	basicVocoder(y,output,dataSize/2,14);
 	hammingWindow(y,wav_length);
 	int i;
 	for (i = 0; i < wav_length; i++){
 		printf("%f\n",y[i]);
-	}
+	}*/
 
 	//Writing the .wav file
 	soundFile = fopen(outFile,"wb");
@@ -106,7 +115,7 @@ int main(int argc, const char * argv[]) {
 	fwrite(&data,sizeof(BYTE),4,soundFile);
 	fwrite(&dataSize,sizeof(DWORD),1,soundFile);
 
-	fwrite(soundData,sizeof(short),dataSize/2,soundFile);
+	fwrite(output,sizeof(short),dataSize/2,soundFile);
 	
 
 

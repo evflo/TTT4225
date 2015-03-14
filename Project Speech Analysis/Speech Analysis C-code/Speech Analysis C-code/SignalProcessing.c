@@ -100,7 +100,7 @@ void LevinsonDurbin(float* r,float* A,int P){
     memset(A,0,P*sizeof(float));
     A[0] = 1;
     b[0] = 1;
-    for (i = 1; i<=P; i++) {
+    for (i = 1; i<P; i++) {
         k[i] = 0.0;
 
     
@@ -121,7 +121,7 @@ void LevinsonDurbin(float* r,float* A,int P){
         E = (1- k[i]*k[i])*E;
 
     }
-    for(i = 1; i<= P;i++){
+    for(i = 1; i< P;i++){
         A[i]= -A[i];
     }
     free(b);

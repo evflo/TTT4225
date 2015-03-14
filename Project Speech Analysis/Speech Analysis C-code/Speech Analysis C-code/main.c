@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
 #include "basicVocoder.h"
 #include "RELP.h"
 #include "SignalProcessing.h"
@@ -22,14 +23,14 @@ int main(int argc, const char * argv[]) {
 	typedef unsigned int DWORD;
 	char* file;
 	char* outFile;
-	if (argv[1] == "sanntid"){
+	if (strcmp(argv[1], "sanntid") == 0){
 		file = "/home/evenflo/Documents/TTT4240/Project Speech Analysis/anvsb1.wav";
 		outFile = "/home/evenflo/Documents/TTT4240/Project Speech Analysis/basic.wav";
-	}else if (argv[1] == "even"){
+	}else if (strcmp(argv[1], "even") == 0){
 		file = "mac-plass";
 		outFile = "mac-plass ut";
 	}else{
-		printf("Husk argument.\n");
+		printf("Husk argument, %s\n", argv[1]);
 		return;
 	}
 	FILE *soundFile;

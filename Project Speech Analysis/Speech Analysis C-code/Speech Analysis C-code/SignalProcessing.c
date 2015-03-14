@@ -222,7 +222,7 @@ void findPitchAndVoice(float* y_pitch,int pitchLength,float* pitchProperties,int
     int foundMinima = 0;
     for (j = 0; j<N; j++) {
         if (pitchFrame[j] <= 0) {
-            printf("%g, %g\n", pitchFrame[j], ry[0]);
+            //printf("%g, %g\n", pitchFrame[j], ry[0]);
             minima= j;
             foundMinima = 1;
        // printf("Found minima, %d\n", minima);
@@ -233,16 +233,29 @@ void findPitchAndVoice(float* y_pitch,int pitchLength,float* pitchProperties,int
         minima = N;
     }
     int k,pitchPos = 0;
-    int max = 0;
+    float max = 0.0;
     for (k = minima; k<N; k++) {
         if (max< pitchFrame[k]) {
             pitchPos = k;
             max = pitchFrame[k];
         }
+        if ((max > ry[0]/2) && (pitchFrame[k] < 0)){ //Might need some fine-tuning, or might be better to remove 
+            break; //Stops after first peak/bang
+        }
     }
-    printf("%d, %d\n", minima, pitchPos);
+    //printf("%g\n", max);
     int pitchPeriod = pitchPos + minima + 0.002*Fs - 3;
     float pitchRatio = ry[pitchPeriod+1]/ry[0];
     pitchProperties[0] = pitchPeriod;
     pitchProperties[1] = pitchRatio;
+    /*if ((pitchPeriod == 63)||(pitchPeriod == 179)){
+        printf("ry[0]: %g\n", ry[0]);
+        for (i = 0; i < N; i++){
+            printf("%d : %6.4g\t|", i, pitchFrame[i]);
+            if (i%4 == 0){
+                printf("\n");
+            }
+        }
+        printf("\n");
+    }*/
 }

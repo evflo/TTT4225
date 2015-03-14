@@ -53,9 +53,9 @@ void basicVocoder(float* data,float* output,int length_data, int P){
 	hammingWindow(windowPitch,pitchLength);
 
 	float lowCoeff[9] = {0, -0.0277, 0, 0.274,0.4974, 0.274, 0, -0.0227, 0};
-	
+	//int test = 0;
 	for (i = Fs*0.03; i<end; i= i+step) {
-
+		//printf("Test: %d\n", ++test);
 		lastSpeech = i+1-0.015*Fs;
 		nextSpeech = i+0.015*Fs;
 		lastPitch = i+1-0.025*Fs;
@@ -65,32 +65,32 @@ void basicVocoder(float* data,float* output,int length_data, int P){
 		for (j = 0; j<nextSpeech-lastSpeech; j++) {
 		    yFiltrated[j] = windowSpeech[j]*data[lastSpeech+j];
 		}
-		if ((i == Fs*0.03+Fs*0.02*3) || (i == Fs*0.03+Fs*0.02*15) || (i == Fs*0.03+Fs*0.02*30)){
+		/*if ((i == Fs*0.03+Fs*0.02*3) || (i == Fs*0.03+Fs*0.02*15) || (i == Fs*0.03+Fs*0.02*30)){
 			printf("yFiltrated, i = %d:\n", i);
 			printf("%g, %g, %g\n", yFiltrated[0], yFiltrated[100], yFiltrated[300]);
-		}
+		}*/
 		for (k = 0; k<nextPitch-lastPitch; k++) {
 		    yPitch[k] = windowPitch[k]*data[lastPitch+k];
 		}
 		
 		autocorr(yFiltrated,speechLength,ry);
-		if ((i == Fs*0.03+Fs*0.02*3) || (i == Fs*0.03+Fs*0.02*15) || (i == Fs*0.03+Fs*0.02*30)){
+		/*if ((i == Fs*0.03+Fs*0.02*3) || (i == Fs*0.03+Fs*0.02*15) || (i == Fs*0.03+Fs*0.02*30)){
 			printf("autocorr, i = %d:\n", i);
 			printf("%g, %g, %g\n", ry[0], ry[100], ry[300]);
-		}
+		}*/
 		LevinsonDurbin(ry,A,P);
-		if ((i == Fs*0.03+Fs*0.02*3) || (i == Fs*0.03+Fs*0.02*15) || (i == Fs*0.03+Fs*0.02*30)){
+		/*if ((i == Fs*0.03+Fs*0.02*3) || (i == Fs*0.03+Fs*0.02*15) || (i == Fs*0.03+Fs*0.02*30)){
 			printf("Levinson, A, i = %d:\n", i);
 			for (j = 0; j < P; j++){
 				printf("%f\n", A[j]);
 			}
-		}
+		}*/
 		findPitchAndVoice(yPitch,pitchLength,pitchProperties,Fs);
 
 		if (pitchProperties[1] >= alpha){
 
 		    last = i+0.01*Fs-pitchProperties[0]-1;
-		    printf("Pitch period: %g\n", pitchProperties[0]);
+		    //printf("Pitch period: %g\n", pitchProperties[0]);
 
 		    for (m = lastPulse; m<i+0.01*Fs; m = m+pitchProperties[0]){
 
@@ -103,12 +103,10 @@ void basicVocoder(float* data,float* output,int length_data, int P){
 		    lastPulse = i+0.01*Fs;
 
 		    rand_gauss(randNoise,step);
-		    if ((i == Fs*0.03+Fs*0.02*3) || (i == Fs*0.03+Fs*0.02*15) || (i == Fs*0.03+Fs*0.02*30)){
+		    /*if ((i == Fs*0.03+Fs*0.02*3) || (i == Fs*0.03+Fs*0.02*15) || (i == Fs*0.03+Fs*0.02*30)){
 				printf("randNoise, A, i = %d:\n", i);
-				printf("%g, %g, %g\n", randNoise[0], randNoise[100], randNoise[300]);
-
-				
-			}
+				printf("%g, %g, %g\n", randNoise[0], randNoise[100], randNoise[300]);	
+			}*/
 		    for (l = 0; l<step; l++) {
 			noise[i-halfStep+l] = beta*randNoise[l];
 			vocoderInput[i-halfStep+l] = pitch[i-halfStep+l] + noise[i-halfStep+l];

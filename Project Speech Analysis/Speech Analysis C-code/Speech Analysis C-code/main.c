@@ -29,6 +29,9 @@ int main(int argc, const char * argv[]) {
 	}else if (strcmp(argv[1], "even") == 0){
 		file = "/home/parallels/Documents/TTT4240/Project Speech Analysis/anvsb1.wav";
 		outFile = "/home/parallels/Documents/TTT4240/Project Speech Analysis/basic.wav";
+	}else if (strcmp(argv[1], "sanntidBenjamin") == 0){
+		file = "/home/benjamsf/Documents/TTT4240/Project Speech Analysis/anvsb1.wav";
+		outFile = "/home/benjamsf/Documents/TTT4240/Project Speech Analysis/basic.wav";
 	}else{
 		printf("Husk argument, %s\n", argv[1]);
 		return;

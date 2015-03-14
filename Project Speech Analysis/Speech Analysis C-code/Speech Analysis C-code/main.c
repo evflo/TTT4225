@@ -53,10 +53,11 @@ int main(int argc, const char * argv[]) {
 	
 	int wav_length = 4;
 	float y[wav_length];
-	y[0] = 1;
+	y[0] = 0;
 	y[1] = 0;
-	y[2] = 1;
-	y[3] = 0; 
+	y[2] = 0;
+	y[3] = 0;
+	
 	float A[1] = {-1};
 	float B[1] = {1};
 	/*
@@ -80,7 +81,7 @@ int main(int argc, const char * argv[]) {
 	*/
 	float output[wav_length];
 	//basicVocoder(y,output,dataSize/2,14);
-	rand_gauss(y,wav_length);
+	hammingWindow(y,wav_length);
 	int i;
 	for (i = 0; i < wav_length; i++){
 		printf("%f\n",y[i]);

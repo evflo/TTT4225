@@ -47,8 +47,8 @@ void basicVocoder(float* data,float* output,int length_data, int P){
 	float* A = (float*) calloc(P,sizeof(float));
 	float B[1] = {1};
 	//Making the Hamming Windows for speech and pitch
-	hammingWindow(speechLength,windowSpeech);
-	hammingWindow(pitchLength,windowPitch);
+	hammingWindow(windowSpeech,speechLength);
+	hammingWindow(windowPitch,pitchLength);
 	
 	float lowCoeff[9] = {0, -0.0277, 0, 0.274,0.4974, 0.274, 0, -0.0227, 0};
 	
@@ -105,7 +105,7 @@ void basicVocoder(float* data,float* output,int length_data, int P){
 		}
 		filtering = filtrate(vocoderInputSample,step,B,1,A,P, vocoderInputSampleFilt);
 		if(filtering == -1){
-			printf("Filtrate function failed: Size of A smaller than 1\n");
+			printf("Filtrate function failed: Size of A is equal to or smaller then 1\n");
 			return;
 		}
 		for (l = 0; l<step; l++) {

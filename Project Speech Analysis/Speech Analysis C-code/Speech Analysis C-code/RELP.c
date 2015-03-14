@@ -36,7 +36,7 @@ void RELPcoder(float* data, float* output,int P, const int length_data, int choi
     float B[1] = {1};
     float* HFexcitation, HFexcitationFilt,HFexcitationLP,LFexcitation;
     float* syntheticFullbandResidual, speechUpsampling,speechAlgorithm;
-    hammingWindow(windowSpeech,speechLength);
+    hammingWindow(speechLength,windowSpeech);
 
     syntheticError = (float*) calloc(length_data,sizeof(float));
     syntheticSpeechUpsampled = (float*) calloc(length_data,sizeof(float));

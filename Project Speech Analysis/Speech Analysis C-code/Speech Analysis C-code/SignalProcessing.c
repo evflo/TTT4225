@@ -54,10 +54,16 @@ int rand_gauss (float *x, int N){
 }
 
 
-void hammingWindow(int L,float* ham){
+void hammingWindow(float* hamming,int L){
     int i;
-    for (i = 0; i<L-1; i++) {
-        ham[i] = 0.54-0.46*cos(2*3.14*(i/(L-1)));
+    float x;
+    int N = L-1;
+    float alpha = 0.54;
+    float beta = 0.46;
+    for (i = 0; i<=L-1; i++) {
+        x = 2.0*3.14*(float)i;
+        x = x/(float)N;
+        hamming[i] = alpha - beta*(float)cos((double)x);
     }
 }
 

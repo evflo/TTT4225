@@ -17,7 +17,7 @@ void LevinsonDurbin(float* r,float* A,int P);
 
 int rand_gauss (float *x, int N);
 
-void hammingWindow(int L,float* ham);
+void hammingWindow(float* hamming,int L);
 
 void autocorr(float* x,int lengthx,float* rx);
 

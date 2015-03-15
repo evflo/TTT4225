@@ -92,7 +92,9 @@ void autocorr(float* x,int lengthx,float* rx){
 
 
 void LevinsonDurbin(float* r,float* A,int P){
-    float* b;
+    altLevDeb(r,A,P);
+
+    /*float* b;
     float* k;
     b = (float*) calloc(P+1,sizeof(float));
     k = (float*) calloc(P+1,sizeof(float));
@@ -122,12 +124,39 @@ void LevinsonDurbin(float* r,float* A,int P){
         E = (1- k[i]*k[i])*E;
 
     }
-    for(i = 1; i< P;i++){
+    for(i = 1; i<= P;i++){
         A[i]= -A[i];
     }
     free(b);
-    free(k);
+    free(k);*/
 }
+
+void altLevDeb(float* r, float* A, int P){
+    A[0] = 1.0;
+    float K = -r[1]/r[0];
+    A[1] = K;
+    float Alpha = r[0]* (1-K*K);
+    int i, j;
+    float S;
+    float* An = (float*) calloc(P+1, sizeof(float));
+    for (i = 2; i < P; i++){
+        S = r[i];
+        for (j = 1; j <= i-1; j++){
+            S += r[j] * A[i-j];
+        }
+        K = -S / Alpha;
+        for (j = 1; j <= i-1; j++){
+            An[j] = A[j] + K * A[i-j];
+        }
+        An[i] = K;
+        Alpha = Alpha * (1-K*K);
+        for (j = 1; j <=i; j++){
+            A[j] = An[j];
+        }
+    }
+    free(An);
+}
+
 int filtrate(float* x,int lengthx,float* B,int sizeB,float* A,int sizeA,float* y){
 	int i,j,k;
     memset(y,0,lengthx*sizeof(float));
@@ -151,6 +180,33 @@ int filtrate(float* x,int lengthx,float* B,int sizeB,float* A,int sizeA,float* y
     }
     return 0;
 }
+/*
+void filtrate(float* x, int np, float *b, int ordB, float *a, int ordA, float* y){
+    int i,j;
+    y[0]=b[0]*x[0];
+    for (i=1;i<ord+1;i++)
+    {
+        y[i]=0.0;
+        for (j=0;j<i+1;j++)
+            y[i]=y[i]+b[j]*x[i-j];
+        for (j=0;j<i;j++)
+            y[i]=y[i]-a[j+1]*y[i-j-1];
+    }
+
+
+for (i=ord+1;i<np+1;i++)
+{
+    y[i]=0.0;
+        for (j=0;j<ord+1;j++)
+        y[i]=y[i]+b[j]*x[i-j];
+        for (j=0;j<ord;j++)
+        y[i]=y[i]-a[j+1]*y[i-j-1];
+}
+} 
+
+
+
+*/
 
 //Takes a signal x of length N, downsamples the signal with a factor D,
 //and puts the output in xDec of length N/D.

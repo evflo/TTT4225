@@ -87,7 +87,7 @@ void basicVocoder(float* data,float* output,int length_data, int P){
 
 		if (pitchProperties[1] >= alpha){
 
-		    last = i+0.01*Fs-pitchProperties[0]-1;
+		    //last = i+0.01*Fs-pitchProperties[0]-1;
 		    //printf("Pitch period: %g\n", pitchProperties[0]);
 
 		    for (m = lastPulse; m<i+0.01*Fs; m = m+pitchProperties[0]){
@@ -141,6 +141,7 @@ void basicVocoder(float* data,float* output,int length_data, int P){
 			maxVal = abs(output[i]);
 		}
 	}
+	//printf("Max value: %g\n", maxVal);
 	for (i = 0; i < length_data; i++){
 		output[i] = output[i] / maxVal;
 	}
@@ -150,4 +151,3 @@ printf("Output after FIR and first gain adjustment: %g, %g, %g\n", output[1000],
 	free(pitch),free(pitchProperties),free(windowPitch),free(windowSpeech),free(ry),free(randNoise),free(A);
 
 }
-

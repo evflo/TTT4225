@@ -44,7 +44,7 @@ void RELPcoder(float* data, float* output,int length_data,int P, int choice){
     float* ryLF = (float*) calloc(speechLength,sizeof(float));
     float* ryHF = (float*) calloc(speechLength,sizeof(float));
     float* ry = (float*) calloc(speechLength,sizeof(float));
-    float* A = (float*) calloc(P,sizeof(float));
+    float* A = (float*) calloc(P+1,sizeof(float));
     float* A_low = (float*) calloc(low_P,sizeof(float));
     float* HFexcitation = (float*) calloc(speechLength,sizeof(float));
     float* HFexcitationFilt = (float*) calloc(speechLength,sizeof(float));
@@ -179,14 +179,15 @@ void RELPcoder(float* data, float* output,int length_data,int P, int choice){
     }    
     float maxVal = 0;
     for (i = 0; i < length_data; i++){
-        if (abs(output[i]) > maxVal){
-            maxVal = abs(output[i]);
+        if (fabsf(output[i]) > maxVal){
+            maxVal = fabsf(output[i]);
         }
     }
     for (i = 0; i < length_data; i++){
         output[i] = output[i] / maxVal;
     }
     //SNR
+    printf("Max value: %g\n", maxVal);
     printf("Error values: %g %g %g\n",syntheticError[1000],syntheticError[5000],syntheticError[10000]);
     printf("Output(HFregeneration) before gain: %g %g %g\n",syntheticSpeechHF[1000],syntheticSpeechHF[5000],syntheticSpeechHF[10000]);
     printf("Output(upsample) before gain: %g %g %g\n",output[1000],output[5000],output[10000]);

@@ -29,4 +29,6 @@ void firFilter(float* coeff,int Ncoeffs, float* x, float* xFiltred, int n);
 
 void findPitchAndVoice(float* y_pitch,int pitchLength,float* pitchProperties,int Fs);
 
+void altLevDeb(float* r, float* A, int P);
+
 #endif /* defined(__Speech_Analysis_C_code__Signal_Processing__) */

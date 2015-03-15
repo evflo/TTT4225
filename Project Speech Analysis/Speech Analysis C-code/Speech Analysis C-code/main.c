@@ -31,8 +31,8 @@ int main(int argc, const char * argv[]) {
 		file = "/home/evenflo/Documents/TTT4240/Project Speech Analysis/anvsb1.wav";
 		outFile = "/home/evenflo/Documents/TTT4240/Project Speech Analysis/basic.wav";
 	}else if (strcmp(argv[1], "evenMac") == 0){
-		file = "/Users/even_florenes/GitHub/TTT4240/Project Speech Analysis/anvsb1.wav"
-		outfile = "/Users/even_florenes/GitHub/TTT4240/Project Speech Analysis/basic.wav"
+		file = "/Users/even_florenes/GitHub/TTT4240/Project Speech Analysis/anvsb1.wav";
+		outFile = "/Users/even_florenes/GitHub/TTT4240/Project Speech Analysis/basic.wav";
 	}else if (strcmp(argv[1], "evenUbuntu") == 0){
 		file = "/home/parallels/Documents/TTT4240/Project Speech Analysis/anvsb1.wav";
 		outFile = "/home/parallels/Documents/TTT4240/Project Speech Analysis/basic.wav";
@@ -41,6 +41,7 @@ int main(int argc, const char * argv[]) {
 		outFile = "/home/benjamsf/Documents/TTT4240/Project Speech Analysis/basic.wav";
 	}else{
 		printf("Feil argument\n");
+		printf("Husk argument\n");
 		return 0;
 	}
 	FILE *soundFile;

@@ -129,7 +129,7 @@ void LevinsonDurbin(float* r,float* A,int P){
     free(k);
 }
 int filtrate(float* x,int lengthx,float* B,int sizeB,float* A,int sizeA,float* y){
-	int i,j,k,l;
+	int i,j,k;
     memset(y,0,lengthx*sizeof(float));
     if (sizeA > 1){
     	for (i = 0; i<lengthx; i++) {

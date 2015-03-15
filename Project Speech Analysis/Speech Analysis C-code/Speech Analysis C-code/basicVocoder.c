@@ -19,7 +19,6 @@ void basicVocoder(float* data,float* output,int length_data, int P){
 	srand(time(NULL));
 	//Defining constant variables
 	int Fs = 16000;
-	int Fc = 4000;
 	int N = 8;
 	int step = 0.02*Fs;
 	int halfStep = step*0.5;
@@ -28,7 +27,6 @@ void basicVocoder(float* data,float* output,int length_data, int P){
 	int pitchLength = 0.05*Fs;
 	int end = length_data-0.025*Fs;
 	//Defining changing variables
-	int last = 1;
 	int lastPulse = 1;
 	int lastSpeech, nextSpeech, lastPitch, nextPitch,filtering;
 	int i,j,k,l,m;

@@ -23,18 +23,25 @@ int main(int argc, const char * argv[]) {
 	typedef unsigned int DWORD;
 	char* file;
 	char* outFile;
+	if (argc == 1){
+		printf("Mangler argument\n");
+		return 0;
+	}
 	if (strcmp(argv[1], "sanntid") == 0){
 		file = "/home/evenflo/Documents/TTT4240/Project Speech Analysis/anvsb1.wav";
 		outFile = "/home/evenflo/Documents/TTT4240/Project Speech Analysis/basic.wav";
-	}else if (strcmp(argv[1], "even") == 0){
+	}else if (strcmp(argv[1], "evenMac") == 0){
+		file = "/Users/even_florenes/GitHub/TTT4240/Project Speech Analysis/anvsb1.wav"
+		outfile = "/Users/even_florenes/GitHub/TTT4240/Project Speech Analysis/basic.wav"
+	}else if (strcmp(argv[1], "evenUbuntu") == 0){
 		file = "/home/parallels/Documents/TTT4240/Project Speech Analysis/anvsb1.wav";
 		outFile = "/home/parallels/Documents/TTT4240/Project Speech Analysis/basic.wav";
 	}else if (strcmp(argv[1], "sanntidBenjamin") == 0){
 		file = "/home/benjamsf/Documents/TTT4240/Project Speech Analysis/anvsb1.wav";
 		outFile = "/home/benjamsf/Documents/TTT4240/Project Speech Analysis/basic.wav";
 	}else{
-		printf("Husk argument\n");
-		return;
+		printf("Feil argument\n");
+		return 0;
 	}
 	FILE *soundFile;
 	BYTE id[4],id2[4],id3[4],data[4];
@@ -73,7 +80,7 @@ int main(int argc, const char * argv[]) {
 	//float y[step],r[step],A[14];
 
 	
-	int step = 0.020*16000;
+	//int step = 0.020*16000;
 	//float r[step],A[14];
 
 	int i;

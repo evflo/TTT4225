@@ -21,14 +21,12 @@ void RELPcoder(float* data, float* output,int length_data,int P, int choice){
     //const int N = sizeof(data);
     int filterOrden = 8;
     int Fs = 16000;
-    int Fc = 2000;
     int D = 4;
     int low_P = 4;
     int step = 0.02*Fs;
-    int windowLength = 0.03*Fs;
     int halfStep = step/2;
     int speechLength = 0.03*Fs;
-    int pitchLength = 0.05*Fs;
+    //int pitchLength = 0.05*Fs;
     int start = 0.005*Fs;
     
     float B[1] = {1};
@@ -65,7 +63,6 @@ void RELPcoder(float* data, float* output,int length_data,int P, int choice){
     for (i=0.03*Fs; i<length_data-0.025*Fs; i+= step) {
         int lastSpeech = i+1-0.015*Fs;
         int nextSpeech = i+0.015*Fs;
-        int j;
        
        
         for (j = 0; j<nextSpeech-lastSpeech; j++) {

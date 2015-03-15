@@ -91,19 +91,109 @@ void autocorr(float* x,int lengthx,float* rx){
 }
 
 
-void LevinsonDurbin(float* r,float* A,int P){
-    altLevDeb(r,A,P);
+/*
 
-    /*float* b;
+void altLevDeb(float* r, float* A, int P){
+    A[0] = 1.0;
+    float K = -r[1]/r[0];
+    A[1] = K;
+    float Alpha = r[0]* (1-K*K);
+    int i, j;
+    float S;
+    float* An = (float*) calloc(P+1, sizeof(float));
+    for (i = 2; i <= P; i++){
+        S = r[i];
+        for (j = 1; j <= i-1; j++){
+            S += r[j] * A[i-j];
+        }
+        K = -S / Alpha;
+        for (j = 1; j <= i-1; j++){
+            An[j] = A[j] + K * A[i-j];
+        }
+        An[i] = K;
+        Alpha = Alpha * (1-K*K);
+        for (j = 1; j <=i; j++){
+            A[j] = An[j];
+        }
+    }
+    free(An);
+}
+
+
+double** forward_substitution(double **coefficient_matrix, int size){
+    int max, i, j, k;
+    double t;
+    for (i = 0; i < size; i++) {
+        max = i;
+        for (j = i + 1; j < size; j++)
+            if (coefficient_matrix[j][i] > coefficient_matrix[max][i])
+                max = j;
+        for (j = 0; j < size + 1; j++) {
+            t = coefficient_matrix[max][j];
+            coefficient_matrix[max][j] = coefficient_matrix[i][j];
+            coefficient_matrix[i][j] = t;
+        }
+        for (j = size; j >= i; j--)
+            for (k = i + 1; k < size; k++)
+                coefficient_matrix[k][j] -= coefficient_matrix[k][i] / coefficient_matrix[i][i] * coefficient_matrix[i][j];
+    }
+        return coefficient_matrix;
+}
+
+double** reverse_elimination(double **coefficient_matrix, int size){
+    int i, j;
+    for (i = size - 1; i >= 0; i--) {
+        coefficient_matrix[i][size] = coefficient_matrix[i][size] / coefficient_matrix[i][i];
+        coefficient_matrix[i][i] = 1;
+        for (j = i - 1; j >= 0; j--) {
+            coefficient_matrix[j][size] -= coefficient_matrix[j][i] * coefficient_matrix[i][size];
+            coefficient_matrix[j][i] = 0;
+        }
+    }
+    return coefficient_matrix;
+}
+
+double** gauss(double **coefficient_matrix, int size) {
+    coefficient_matrix = forward_substitution(coefficient_matrix, size);
+    return reverse_elimination(coefficient_matrix, size);
+}
+
+float* calculate_lpc_coefficients(double *correlation_values, int size){
+    double **coefficient_matrix = (double **)malloc(size * sizeof(double*));
+    int i, j;
+    for (i = 0; i < size; i++) coefficient_matrix[i] = (double*)malloc((size + 1) * sizeof(double));
+    
+    for (i = 0; i < size; ++i)
+        for (j = 0; j < size; ++j)
+            coefficient_matrix[i][j] = correlation_values[abs(i - j)];
+    
+    for (i = 0; i < size; i++)
+        coefficient_matrix[i][size] = correlation_values[i + 1];
+    
+    coefficient_matrix = gauss(coefficient_matrix, size);
+    double* features = (double*)malloc(sizeof(double)*size);
+    float* featuresFloat = (float*)malloc(sizeof(float)*size);
+    for (i = 0; i < size; i++){
+        features[i] = coefficient_matrix[i][size];
+        featuresFloat[i] = (float) features[i];
+    }
+    return featuresFloat;
+}
+*/
+void lpc(float* r,float* A,int P);
+void LevinsonDurbin(float* r,float* A,int P){
+    //altLevDeb(r,A,P);
+    
+    float* b;
     float* k;
     b = (float*) calloc(P+1,sizeof(float));
     k = (float*) calloc(P+1,sizeof(float));
     float E = r[0];
     int i,j,l;
-    memset(A,0,P*sizeof(float));
+    memset(A,0,(P+1)*sizeof(float));
     A[0] = 1;
     b[0] = 1;
-    for (i = 1; i<P; i++) {
+    for (i = 1; i<=P; i++) {
         //k[i] = 0.0;
 
     
@@ -128,37 +218,13 @@ void LevinsonDurbin(float* r,float* A,int P){
         A[i]= -A[i];
     }
     free(b);
-    free(k);*/
+    free(k);
 }
 
-void altLevDeb(float* r, float* A, int P){
-    A[0] = 1.0;
-    float K = -r[1]/r[0];
-    A[1] = K;
-    float Alpha = r[0]* (1-K*K);
-    int i, j;
-    float S;
-    float* An = (float*) calloc(P+1, sizeof(float));
-    for (i = 2; i < P; i++){
-        S = r[i];
-        for (j = 1; j <= i-1; j++){
-            S += r[j] * A[i-j];
-        }
-        K = -S / Alpha;
-        for (j = 1; j <= i-1; j++){
-            An[j] = A[j] + K * A[i-j];
-        }
-        An[i] = K;
-        Alpha = Alpha * (1-K*K);
-        for (j = 1; j <=i; j++){
-            A[j] = An[j];
-        }
-    }
-    free(An);
-}
 
 int filtrate(float* x,int lengthx,float* B,int sizeB,float* A,int sizeA,float* y){
 	int i,j,k;
+    sizeA++;
     memset(y,0,lengthx*sizeof(float));
     if (sizeA > 1){
     	for (i = 0; i<lengthx; i++) {

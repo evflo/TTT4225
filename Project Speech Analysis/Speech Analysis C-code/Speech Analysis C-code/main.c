@@ -107,7 +107,7 @@ int main(int argc, const char * argv[]) {
 	float output[wav_length];
 	//basicVocoder(y,output,dataSize/2,14);
 	//rand_gauss(y,wav_length);
-	RELPcoder(y,output,dataSize/2,14,1);
+	RELPcoder(y,output,dataSize/2,14,0);
 	/*
 	hammingWindow(y,wav_length);
 	int i;

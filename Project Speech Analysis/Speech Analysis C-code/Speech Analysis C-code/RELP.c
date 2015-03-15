@@ -45,7 +45,7 @@ void RELPcoder(float* data, float* output,int length_data,int P, int choice){
     float* ryHF = (float*) calloc(speechLength,sizeof(float));
     float* ry = (float*) calloc(speechLength,sizeof(float));
     float* A = (float*) calloc(P+1,sizeof(float));
-    float* A_low = (float*) calloc(low_P,sizeof(float));
+    float* A_low = (float*) calloc(low_P+1,sizeof(float));
     float* HFexcitation = (float*) calloc(speechLength,sizeof(float));
     float* HFexcitationFilt = (float*) calloc(speechLength,sizeof(float));
     float* HFexcitationLP = (float*) calloc(speechLength,sizeof(float));
@@ -131,7 +131,10 @@ void RELPcoder(float* data, float* output,int length_data,int P, int choice){
         autocorr(HFexcitation,speechLength,ryHF);
         autocorr(LFexcitation,speechLength,ryLF);
         LevinsonDurbin(ry,A_low,low_P);
-
+        if ((i == Fs*0.03+Fs*0.02*3) || (i == Fs*0.03+Fs*0.02*15) || (i == Fs*0.03+Fs*0.02*30)){
+        printf("A_low for i = %d \n",i );
+        printf("%g %g %g %g %g\n",A_low[0], A_low[1], A_low[2],A_low[3],A_low[4]);
+        }
         filtering = filtrate(HFexcitation,speechLength,B,1,A_low,low_P,HFexcitationLP);
         if(filtering == -1){
             printf("Filtrate function failed: Size of A smaller than 1\n");

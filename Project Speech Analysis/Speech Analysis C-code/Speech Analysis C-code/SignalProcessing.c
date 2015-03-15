@@ -85,7 +85,7 @@ void autocorr(float* x,int lengthx,float* rx){
         }
     }
     for (l =0 ; l<lengthx; l++) {
-        rx[l] = C[l];
+        rx[l] = C[l]/C[0];
     }
     free(C);
 }
@@ -102,21 +102,21 @@ void LevinsonDurbin(float* r,float* A,int P){
     A[0] = 1;
     b[0] = 1;
     for (i = 1; i<P; i++) {
-        k[i] = 0.0;
+        //k[i] = 0.0;
 
     
-        for (j = 1; j<=i-1; j++) {
-            k[i] += b[j]*r[i-j];
+        for (j = 1; j<i; j++) {
+            k[i] += A[j]*r[i-j];
 
         }
         
         k[i] = (r[i]-k[i])/E;
-        A[i] = (float)k[i];
-        for (j=1; j<=i-1; j++) {
-            A[j] = (float)b[j] - (float)k[i]*(float)b[i-j];
+        A[i] = k[i];
+        for (j=1; j<i; j++) {
+            b[j] = A[j] - k[i]*A[i-j];
         }
-        for (l = 0; l<P; l++) {
-            b[l] = A[l];
+        for (l = 1; l<i; l++) {
+            A[l] = b[l];
                  
         }
         E = (1- k[i]*k[i])*E;

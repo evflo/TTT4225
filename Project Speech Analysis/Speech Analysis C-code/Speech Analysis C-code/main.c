@@ -33,7 +33,7 @@ int main(int argc, const char * argv[]) {
 		file = "/home/benjamsf/Documents/TTT4240/Project Speech Analysis/anvsb1.wav";
 		outFile = "/home/benjamsf/Documents/TTT4240/Project Speech Analysis/basic.wav";
 	}else{
-		printf("Husk argument%s\n");
+		printf("Husk argument\n");
 		return;
 	}
 	FILE *soundFile;
@@ -75,16 +75,13 @@ int main(int argc, const char * argv[]) {
 	
 	int step = 0.020*16000;
 	//float r[step],A[14];
-	float ytest[step];
 
 	int i;
 	float gainDown = 1.0/32760.0;
 	for (i=1;i<wav_length;i++){
 	
 		y[i] = (float) soundData[i]*gainDown;
-		if(i<step){
-			ytest[i] =(float) soundData[i]*gainDown;
-		}
+		
 	}
 	printf("Input ints: %d, %d, %d\n", soundData[1000], soundData[5000], soundData[10000]);
 	printf("convert to float: %g, %g, %g\n", y[1000], y[5000], y[10000]);
@@ -102,7 +99,7 @@ int main(int argc, const char * argv[]) {
 	float output[wav_length];
 	//basicVocoder(y,output,dataSize/2,14);
 	//rand_gauss(y,wav_length);
-	basicVocoder(y,output,dataSize/2,14);
+	RELPcoder(y,output,dataSize/2,14,0);
 	/*
 	hammingWindow(y,wav_length);
 	int i;

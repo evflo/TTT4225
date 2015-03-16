@@ -180,7 +180,6 @@ float* calculate_lpc_coefficients(double *correlation_values, int size){
     return featuresFloat;
 }
 */
-void lpc(float* r,float* A,int P);
 void LevinsonDurbin(float* r,float* A,int P){
     //altLevDeb(r,A,P);
     
@@ -368,6 +367,9 @@ void findPitchAndVoice(float* y_pitch,int pitchLength,float* pitchProperties,int
     //printf("%g\n", max);
     int pitchPeriod = pitchPos + minima + 0.002*Fs - 3;
     float pitchRatio = ry[pitchPeriod+1]/ry[0];
+    //Testing------------
+    //pitchPeriod = pitchPeriod * pow(pitchPeriod/10, 2);
+    //Testing------------
     pitchProperties[0] = pitchPeriod;
     pitchProperties[1] = pitchRatio;
     /*if ((pitchPeriod == 63)||(pitchPeriod == 179)){

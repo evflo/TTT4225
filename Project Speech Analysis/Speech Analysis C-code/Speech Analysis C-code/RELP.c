@@ -35,6 +35,7 @@ void RELPcoder(float* data, float* output,int length_data,int P, int choice){
     float* syntheticError = (float*) calloc(length_data,sizeof(float));
     float* syntheticSpeechUpsampled = (float*) calloc(length_data,sizeof(float));
     float* syntheticSpeechHF = (float*) calloc(length_data,sizeof(float));
+    float* temp1 = (float*) calloc(length_data,sizeof(float));
     float* windowSpeech = (float*) calloc(speechLength,sizeof(float));
     float* dataDecimated = (float*) calloc(speechLength/D,sizeof(float));
     float* speechFilt = (float*) calloc(speechLength,sizeof(float));
@@ -181,16 +182,31 @@ void RELPcoder(float* data, float* output,int length_data,int P, int choice){
             break;
     }    
     float maxVal = 0;
+    float sum = 0;
     for (i = 0; i < length_data; i++){
+        sum += fabsf(output[i])/(float)length_data;
         if (fabsf(output[i]) > maxVal){
             maxVal = fabsf(output[i]);
+
         }
     }
+    
     for (i = 0; i < length_data; i++){
-        output[i] = output[i] / maxVal;
+        if(fabsf(output[i]) >= sum){
+            output[i] = output[i] / fabsf(output[i]);// maxVal;
+        }else{
+            output[i] = output[i]/sum;
+        }
     }
     //SNR
-    printf("Max value: %g\n", maxVal);
+    /*
+    firFilter(coeffLow,filterOrden,output, temp1, length_data);
+
+    for (i = 0; i < length_data; i++){
+        output[i] = temp1[i];
+    }
+    */
+    printf("Max value and average: %g %g\n", maxVal,sum);
     printf("Error values: %g %g %g\n",syntheticError[1000],syntheticError[5000],syntheticError[10000]);
     printf("Output(HFregeneration) before gain: %g %g %g\n",syntheticSpeechHF[1000],syntheticSpeechHF[5000],syntheticSpeechHF[10000]);
     printf("Output(upsample) before gain: %g %g %g\n",output[1000],output[5000],output[10000]);

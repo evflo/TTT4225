@@ -44,12 +44,11 @@ void basicVocoder(float* data,float* output,int length_data, int P){
 	float* yFiltrated = (float*) calloc(speechLength,sizeof(float));
 	float* yPitch = (float*) calloc(pitchLength,sizeof(float));
 	float* ry = (float*) calloc(speechLength,sizeof(float));
-	float* A = (float*) calloc(P,sizeof(float));
+	float* A = (float*) calloc(P+1,sizeof(float));
 	float B[1] = {1};
 	//Making the Hamming Windows for speech and pitch
 	hammingWindow(windowSpeech,speechLength);
 	hammingWindow(windowPitch,pitchLength);
-
 	float lowCoeff[9] = {0, -0.0277, 0, 0.274,0.4974, 0.274, 0, -0.0227, 0};
 	//int test = 0;
 	for (i = Fs*0.03; i<end; i= i+step) {
@@ -86,12 +85,13 @@ void basicVocoder(float* data,float* output,int length_data, int P){
 		findPitchAndVoice(yPitch,pitchLength,pitchProperties,Fs);
 
 		if (pitchProperties[1] >= alpha){
-
+			printf("Pitch: %g\n", pitchProperties[0]);
 		    //last = i+0.01*Fs-pitchProperties[0]-1;
 		    //printf("Pitch period: %g\n", pitchProperties[0]);
-
-		    for (m = lastPulse; m<i+0.01*Fs; m = m+pitchProperties[0]){
-
+			int pp = (int) (pitchProperties[0]*0.3);
+			int test = 0;
+		    for (m = lastPulse; m<i+0.01*Fs; m = m+pp){
+		    	printf("test:%d\t", test++);
 				pitch[m] = 1;
 				lastPulse = m;
 		    }

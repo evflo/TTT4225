@@ -77,13 +77,7 @@ int main(int argc, const char * argv[]) {
 	
 	int wav_length = dataSize/2;
 	float y[wav_length];
-	//int step = 0.020*16000;
-	//float y[step],r[step],A[14];
-
 	
-	//int step = 0.020*16000;
-	//float r[step],A[14];
-
 	int i;
 	float gainDown = 1.0/32760.0;
 	for (i=1;i<wav_length;i++){
@@ -94,27 +88,11 @@ int main(int argc, const char * argv[]) {
 	printf("Input ints: %d, %d, %d\n", soundData[1000], soundData[5000], soundData[10000]);
 	printf("convert to float: %g, %g, %g\n", y[1000], y[5000], y[10000]);
 
-	/*autocorr(y,step,r);
-	LevinsonDurbin(r,A,14);
-	for (i = 0; i < 14; ++i)
-	{
 	
-
-		printf("%.9g ",A[i]);
-	}
-	printf("\n\n");
-	*/
 	float output[wav_length];
-	//basicVocoder(y,output,dataSize/2,14);
-	//rand_gauss(y,wav_length);
-	RELPcoder(y,output,dataSize/2,14,0);
-	/*
-	hammingWindow(y,wav_length);
-	int i;
-	for (i = 0; i < wav_length; i++){
-		printf("%f\n",y[i]);
-	}*/
-
+	basicVocoder(y,output,dataSize/2,14);
+	//RELPcoder(y,output,dataSize/2,14,0);
+	
 	float gainUp = 32760.0;
 	float tmp;
 	for(i=0;i<wav_length;i++){

@@ -1,23 +1,27 @@
-%Tar inn et kort signal x, med samplingsfrekvens Fs.
-%Finner pitchens periode (pP) gitt i antall samples og ratioen (vR) mellom
-%narmeste "harmoniske" og r_x(0). Ratioen gir ett m?l p? i hvilken grad
-%lyden er stemt eller ikke.
+%Takes in a short signal x, with a given sampling frequency Fs
+%Finds the pitch periode (pP) given as the number of samples and the ratio (vR) 
+%between the closest "harmonic" and r_x(0)
+%The ratio indecates if the signal is voiced or not
 function [pP, vR] = findPitchAndVoice(x, Fs)
-    %r_x = xcorr(x,x);
-    %r_x = r_x(ceil(length(r_x)/2):end);
+	%Finds the auto correlation of x
     r_x = autocorr(x);
+	
+	%Define the pitch properties for range and frame
     pitchRange = floor(0.002*Fs):floor(0.02*Fs);
     pitchFrame = r_x(pitchRange);
-    %figure;
-    %plot(pitchFrame);
-    
+   
+    %Finds where the frame is less then zeros or sets minima as the length of pitchFrame
+	%if no minima is found
     minima = find(pitchFrame <= 0);
     if isempty(minima)
         minima = length(pitchFrame);
-    end
+    end %if
+	
+	%Finds the pitch positions
     pitchPos = find(pitchFrame(minima(1):end) == max(pitchFrame(minima(1):end)));
+	
+	%Sets the value of output values by computed data
     pP = pitchPos + minima(1) + pitchRange(1) - 3;
     vR = r_x(pP+1)/r_x(1);
-    %figure;
-    %plot(r_x);
-end
+    
+end %function

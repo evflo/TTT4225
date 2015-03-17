@@ -6,7 +6,9 @@
 //  Copyright (c) 2015 Even. All rights reserved.
 //
 
+
 #include "RELP.h"
+//Including the SignalProcessing.h to use the function defined in SignalProcessing.c
 #include "SignalProcessing.h"
 
 #include <stdio.h>
@@ -17,8 +19,8 @@
 
 
 void RELPcoder(float* data, float* output,int length_data,int P, int choice){
-    
-    //const int N = sizeof(data);
+
+	//Define the parameter values to be used in the processing
     int filterOrden = 8;
     int Fs = 16000;
     int D = 4;
@@ -26,12 +28,11 @@ void RELPcoder(float* data, float* output,int length_data,int P, int choice){
     int step = 0.02*Fs;
     int halfStep = step/2;
     int speechLength = 0.03*Fs;
-    //int pitchLength = 0.05*Fs;
     int start = 0.005*Fs;
-    
     float B[1] = {1};
 
-
+	//Allocating space for all the arrays that is needed in the computation
+	//Using calloc sets the value of every array position to zero
     float* syntheticError = (float*) calloc(length_data,sizeof(float));
     float* syntheticSpeechUpsampled = (float*) calloc(length_data,sizeof(float));
     float* syntheticSpeechHF = (float*) calloc(length_data,sizeof(float));
@@ -54,13 +55,20 @@ void RELPcoder(float* data, float* output,int length_data,int P, int choice){
     float* syntheticFullbandResidual = (float*) calloc(speechLength,sizeof(float));
     float* speechUpsampling = (float*) calloc(speechLength,sizeof(float));
     float* speechAlgorithm = (float*) calloc(speechLength,sizeof(float));
-    //Make filters
+	
+    //Defining the filter coefficients for both the lowpass- and highpassfilter
+	//The coefficients has been computed in MATLAB
     float coeffLow[9] = {0, -0.0277, 0, 0.274,0.4974, 0.274, 0, -0.0227, 0};
     float coeffHigh[9] = {0, -0.0161, -0.086, -0.1948, 0.7501, -0.1948, -0.0860, -0.0161, 0};
+	
+	//Defining variables that will be changed in the processing
     float gainLF, gainHF, gain;
     int i,j,filtering;
-    hammingWindow(windowSpeech,speechLength);
     float tmp;
+	
+	//Making the Hamming window using the function in SignalProcessing.h
+    hammingWindow(windowSpeech,speechLength);
+
     for (i=0.03*Fs; i<length_data-0.025*Fs; i+= step) {
         int lastSpeech = i+1-0.015*Fs;
         int nextSpeech = i+0.015*Fs;
@@ -198,14 +206,7 @@ void RELPcoder(float* data, float* output,int length_data,int P, int choice){
             output[i] = output[i]/sum;
         }
     }
-    //SNR
-    /*
-    firFilter(coeffLow,filterOrden,output, temp1, length_data);
-
-    for (i = 0; i < length_data; i++){
-        output[i] = temp1[i];
-    }
-    */
+   
     printf("Max value and average: %g %g\n", maxVal,sum);
     printf("Error values: %g %g %g\n",syntheticError[1000],syntheticError[5000],syntheticError[10000]);
     printf("Output(HFregeneration) before gain: %g %g %g\n",syntheticSpeechHF[1000],syntheticSpeechHF[5000],syntheticSpeechHF[10000]);

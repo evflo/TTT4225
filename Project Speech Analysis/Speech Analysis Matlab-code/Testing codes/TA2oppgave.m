@@ -1,4 +1,7 @@
-%Test for different P
+%Script which runs a program for testing the different 
+%testfunctions for basicVocoder and RELPcoder either
+%alone or together
+
 Fs = 16000;
 input = prompt('1 for testing Vocoder\n 2 for testing RELP \n 3 for testing both \n Push any other button for exit\n');
 
@@ -14,6 +17,6 @@ while 1==1
             testRELP();
         otherwise
             break;
-    end
-end
+    end %switch
+end %while
 

@@ -1,29 +1,39 @@
+%testRELP is a test function for RELPcoder for different values of P
+%to be used to answer the group specific task.
+%The function plays the output of RELPcoder for randomly picked P
+%to make the review of quality be as precise as possible
 function testRELP()
-
-    P = [2 4 6 8 10 20]; %Different P
+	
+	%Different P-values to be tested
+    P = [2 4 6 8 10 20];
+	
     Fs = 16000; %Sampling frequency
-    pause = zeros(1,10*Fs); %Have pause signal which gives time to subjectively review the signal
+    pause = zeros(1,10*Fs);  %10 sec pause signal which gives time to subjectively review the signal
 
+	%First playing the original signal
     fprintf('Play of original\n');
     soundsc(RELP('anvsb1.wav',14),Fs);
     soundsc(pause,Fs)
 
     while ~isempty(P)
+		%Randomly choosen value of P to be played
         k = ceil(rand*length(P));
+		
+		%Find output for a random P
         x = RELPcoder('anvsb1.wav',P(k));
-
-        text = sprintf('Plot for P = %d',P(k));
-
+		
+		%Play of output for choosen P followed by a pause
         fprintf('Output for P = %d is now being played \n',P(k));
-
         soundsc(x,Fs);
         soundsc(pause,Fs);
-
-
+		
+		%Plot of the signal is also presented to be used in review
         figure;
+        text = sprintf('Plot for P = %d',P(k));
         plot(x),title(text);
-        P(k) = [];
+       	
+		%Discard P-values that have been tested
+		P(k) = [];
 
-    end
-    
-end
+    end %while
+end %function

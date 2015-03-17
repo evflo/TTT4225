@@ -9,6 +9,7 @@ function testVocoder()
 	
     Fs = 16000; %Sampling frequency
     pause = zeros(1,10*Fs); %10 sec pause signal which gives time to subjectively review the signal
+	
 	%First playing the original signal
     fprintf('Play of original\n');
     soundsc(basicVocoder('anvsb1.wav',14),Fs);

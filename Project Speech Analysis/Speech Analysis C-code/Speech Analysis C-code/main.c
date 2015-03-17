@@ -39,6 +39,9 @@ int main(int argc, const char * argv[]) {
 	}else if (strcmp(argv[1], "sanntidBenjamin") == 0){
 		file = "/home/benjamsf/Documents/TTT4240/Project Speech Analysis/anvsb1.wav";
 		outFile = "/home/benjamsf/Documents/TTT4240/Project Speech Analysis/basic.wav";
+	}else if (strcmp(argv[1], "puttyBenjamin") == 0){
+		file = "/home/shomeb/b/benjamsf/Documents/Anvendt/TTT4240/Project Speech Analysis/anvsb1.wav";
+		outFile = "/home/shomeb/b/benjamsf/Documents/Anvendt/TTT4240/Project Speech Analysis/basic.wav";
 	}else{
 		printf("Feil argument\n");
 		printf("Husk argument\n");

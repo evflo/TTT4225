@@ -95,7 +95,7 @@ int main(int argc, const char * argv[]) {
 		printf("Using RELP coder with upsampling.\n");
 		RELPcoder(y,output,dataSize/2,14,0);
 	}else if(strcmp(argv[2], "relpHF") == 0){
-		printf("Using RELP coder with HF regeneration.\n")
+		printf("Using RELP coder with HF regeneration.\n");
 		RELPcoder(y,output,dataSize/2,14,1);
 	}else{
 		printf("Using basic vocoder.\n");

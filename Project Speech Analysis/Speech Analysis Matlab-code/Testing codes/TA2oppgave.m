@@ -22,7 +22,3 @@ while 1==1
             break;
     end %switch
 end %while
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes

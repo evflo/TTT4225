@@ -1,10 +1,3 @@
-//
-//  main.c
-//  Speech Analysis C-code
-//
-//  Created by Even on 05/03/15.
-//  Copyright (c) 2015 Even. All rights reserved.
-//
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -27,6 +20,8 @@ int main(int argc, const char * argv[]) {
 		printf("Mangler argument\n");
 		return 0;
 	}
+	
+	
 	if (strcmp(argv[1], "sanntid") == 0){
 		file = "/home/evenflo/Documents/TTT4240/Project Speech Analysis/anvsb1.wav";
 		outFile = "/home/evenflo/Documents/TTT4240/Project Speech Analysis/basic.wav";
@@ -47,12 +42,13 @@ int main(int argc, const char * argv[]) {
 		printf("Husk argument\n");
 		return 0;
 	}
+	// Declaring variables for header-elements
 	FILE *soundFile;
 	BYTE id[4],id2[4],id3[4],data[4];
 	DWORD size,formatSize,sampleRate,bytesPerSec,dataSize;
 	short format_tag,channels,block_align,bitsPerSample;
 
-	//Reading the .wav file.
+	//Reading the .wav-file, including all header elements.
 	if((soundFile = fopen(file,"rb"))== NULL){
 		perror("Failed to open file for reading");
 	}
@@ -81,6 +77,7 @@ int main(int argc, const char * argv[]) {
 	int wav_length = dataSize/2;
 	float y[wav_length];
 	
+	// Adjusting gain for float and converting to float format
 	int i;
 	float gainDown = 1.0/32760.0;
 	for (i=1;i<wav_length;i++){
@@ -88,14 +85,24 @@ int main(int argc, const char * argv[]) {
 		y[i] = (float) soundData[i]*gainDown;
 		
 	}
-	printf("Input ints: %d, %d, %d\n", soundData[1000], soundData[5000], soundData[10000]);
-	printf("convert to float: %g, %g, %g\n", y[1000], y[5000], y[10000]);
-
-	
 	float output[wav_length];
-	basicVocoder(y,output,dataSize/2,14);
-	//RELPcoder(y,output,dataSize/2,14,0);
 	
+	//Choosing the correct encoding
+	if (argc < 3){	// Default to basic vocoder
+		printf("Using basic vocoder.\n");
+		basicVocoder(y,output,dataSize/2,14);
+	}else if(strcmp(argv[2], "relpUp") == 0){
+		printf("Using RELP coder with upsampling.\n");
+		RELPcoder(y,output,dataSize/2,14,0);
+	}else if(strcmp(argv[2], "relpHF") == 0){
+		printf("Using RELP coder with HF regeneration.\n")
+		RELPcoder(y,output,dataSize/2,14,1);
+	}else{
+		printf("Using basic vocoder.\n");
+		basicVocoder(y,output,dataSize/2,14);
+	}
+	
+	// Adjusting gain and converting to integer
 	float gainUp = 32760.0;
 	float tmp;
 	for(i=0;i<wav_length;i++){
@@ -103,7 +110,7 @@ int main(int argc, const char * argv[]) {
 		soundData[i] = (short) tmp; //should be output instead of y
 	}
 	printf("Output after gain: %d, %d, %d\n", soundData[1000], soundData[5000], soundData[10000]);
-	//Writing the .wav file
+	//Writing the .wav file including header
 	soundFile = fopen(outFile,"wb");
 	if (soundFile == NULL){
 		perror("Failed to open file to be written to");

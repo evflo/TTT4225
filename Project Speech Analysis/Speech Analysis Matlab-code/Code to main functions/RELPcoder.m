@@ -36,7 +36,7 @@ function [x_algorithm, x_upsample] = RELPcoder(soundFile,P)
 		speech_filt = windowSpeech.*speech(lastSpeech:nextSpeech);
 		
 		%Finding the LP-coefficients using a made LevinsonDurbin function which uses the autocorrelation
-		A = LevinsonDurbin(autocorr(speech_filt,P);
+		A = LevinsonDurbin(autocorr(speech_filt),P);
 		
 		%Filtrate the speech with found A-coefficients
 		speech_est = filter(A,1,speech_filt);
@@ -76,8 +76,7 @@ function [x_algorithm, x_upsample] = RELPcoder(soundFile,P)
 		HF_excitation = gain .* HF_excitation;
 		
 		%Addding both the low frequencies and the high frequencies 
-		synthetic_fullband_residual = LF_excitation + HF_excitation
-		;
+		synthetic_fullband_residual = LF_excitation + HF_excitation;
 		%Computing the upsampled solution
 		speech_upsampling = filter(1,A,zero_insertion);
 		

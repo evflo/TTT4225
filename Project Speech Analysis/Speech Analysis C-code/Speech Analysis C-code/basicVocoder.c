@@ -47,7 +47,10 @@ void basicVocoder(float* data,float* output,int length_data, int P){
 	//Making the Hamming Windows for speech and pitch
 	hammingWindow(windowSpeech,speechLength);
 	hammingWindow(windowPitch,pitchLength);
+<<<<<<< Updated upstream
 	// Low-pass filter coefficients, calculated in MATLAB
+=======
+>>>>>>> Stashed changes
 	float lowCoeff[9] = {0, -0.0277, 0, 0.274,0.4974, 0.274, 0, -0.0227, 0};
 
 	// Iterating through the signal, analyzing and regenerating the signal 20ms at a time.
@@ -78,10 +81,20 @@ void basicVocoder(float* data,float* output,int length_data, int P){
 		// Generate a signal using either white noise or pulse trains depending on the voiced properties
 		// of the signal segment.
 		if (pitchProperties[1] >= alpha){
+<<<<<<< Updated upstream
 			// When the signal is voiced, make a pulse train of "dirac"-pulses with intervals
 			// defined by the previously found pitch period.
 			int pp = (int) (pitchProperties[0]);
 		    for (m = lastPulse; m<i+0.01*Fs; m = m+pp){
+=======
+			printf("Pitch: %g\n", pitchProperties[0]);
+		    //last = i+0.01*Fs-pitchProperties[0]-1;
+		    //printf("Pitch period: %g\n", pitchProperties[0]);
+			int pp = (int) (pitchProperties[0]*0.3);
+			int test = 0;
+		    for (m = lastPulse; m<i+0.01*Fs; m = m+pp){
+		    	printf("test:%d\t", test++);
+>>>>>>> Stashed changes
 				pitch[m] = 1;
 				lastPulse = m;
 		    }

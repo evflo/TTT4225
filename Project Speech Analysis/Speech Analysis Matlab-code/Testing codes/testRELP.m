@@ -8,13 +8,15 @@ function testRELP()
     P = [2 4 6 8 10 20];
 	
     Fs = 16000; %Sampling frequency
+<<<<<<< Updated upstream
     pause = zeros(1,10*Fs);  %10 sec pause signal which gives time to subjectively review the signal
+=======
+>>>>>>> Stashed changes
 
 	%First playing the original signal
     fprintf('Play of original\n');
     soundsc(RELP('anvsb1.wav',14),Fs);
-    soundsc(pause,Fs)
-
+    pause();
     while ~isempty(P)
 		%Randomly choosen value of P to be played
         k = ceil(rand*length(P));
@@ -25,8 +27,12 @@ function testRELP()
 		%Play of output for choosen P followed by a pause
         fprintf('Output for P = %d is now being played \n',P(k));
         soundsc(x,Fs);
+<<<<<<< Updated upstream
         soundsc(pause,Fs);
 		
+=======
+        pause();
+>>>>>>> Stashed changes
 		%Plot of the signal is also presented to be used in review
         figure;
         text = sprintf('Plot for P = %d',P(k));

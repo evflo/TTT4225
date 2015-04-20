@@ -1,4 +1,10 @@
-
+// Signal processing systems for speech analysis
+// This program requires extra arguments to run, the syntax is:
+// $./<prog> <path_keyword> <method>
+// <method> defaults to basic vocoder, but can be changed by "relpUp" or "relpHF"
+// Example: $./test sanntid relpUp
+// There is no Makefile, but this project can be compiled by running:
+// $gcc -o test main.c RELP.c basicVocoder.c SignalProcessing.c -lm
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -21,7 +27,7 @@ int main(int argc, const char * argv[]) {
 		return 0;
 	}
 	
-	
+	// Add file locations for source and target file
 	if (strcmp(argv[1], "sanntid") == 0){
 		file = "/home/evenflo/Documents/TTT4240/Project Speech Analysis/anvsb1.wav";
 		outFile = "/home/evenflo/Documents/TTT4240/Project Speech Analysis/basic.wav";
@@ -72,18 +78,16 @@ int main(int argc, const char * argv[]) {
 	if (fclose(soundFile) != 0){
 		perror("Failed to close file\n");
 	}
-	//Reading the .wav file.
 	
+	//Reading the .wav file.
 	int wav_length = dataSize/2;
 	float y[wav_length];
 	
 	// Adjusting gain for float and converting to float format
 	int i;
 	float gainDown = 1.0/32760.0;
-	for (i=1;i<wav_length;i++){
-	
-		y[i] = (float) soundData[i]*gainDown;
-		
+	for (i=1;i<wav_length;i++){	
+		y[i] = (float) soundData[i]*gainDown;		
 	}
 	float output[wav_length];
 	
@@ -107,9 +111,9 @@ int main(int argc, const char * argv[]) {
 	float tmp;
 	for(i=0;i<wav_length;i++){
 		tmp = output[i]*gainUp;
-		soundData[i] = (short) tmp; //should be output instead of y
+		soundData[i] = (short) tmp;
 	}
-	printf("Output after gain: %d, %d, %d\n", soundData[1000], soundData[5000], soundData[10000]);
+	
 	//Writing the .wav file including header
 	soundFile = fopen(outFile,"wb");
 	if (soundFile == NULL){
@@ -128,7 +132,6 @@ int main(int argc, const char * argv[]) {
 	fwrite(&bitsPerSample,sizeof(short),1,soundFile);
 	fwrite(&data,sizeof(BYTE),4,soundFile);
 	fwrite(&dataSize,sizeof(DWORD),1,soundFile);
-
 	fwrite(soundData,sizeof(short),dataSize/2,soundFile);
 	
 

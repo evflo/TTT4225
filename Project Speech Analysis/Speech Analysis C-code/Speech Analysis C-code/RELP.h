@@ -1,7 +1,5 @@
-//
 //  RELP.h
 //  Speech Analysis C-code
-//
 //
 
 #ifndef __Speech_Analysis_C_code__RELP__

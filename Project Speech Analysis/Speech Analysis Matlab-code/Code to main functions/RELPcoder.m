@@ -1,7 +1,7 @@
-%The function RELPcoder takes a sound file and the order P to be used in the linear prediction as and
-%returns to arrays called x_algorithm and x_upsample. x_algorithm is the output of high frequency regeneration
-%using the algorithm explained in the task theory. x_upsample use upsampling to regenerate the
-%high frequencies.
+% The function RELPcoder takes a sound file and the order P to be used in the linear prediction as and
+% returns to arrays called x_algorithm and x_upsample. x_algorithm is the output of high frequency regeneration
+% using the algorithm explained in the task theory. x_upsample use upsampling to regenerate the
+% high frequencies.
 function [x_algorithm, x_upsample] = RELPcoder(soundFile,P)
 	%Take in the data in the sound file
 	speech = wavread(soundFile);

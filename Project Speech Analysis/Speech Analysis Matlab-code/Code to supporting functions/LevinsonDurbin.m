@@ -1,5 +1,5 @@
-%The function LevinsonDurbin takes the auto correlation of a signal and the linear prediciton order P
-%as input, and returns an array of the different coefficients for the wanted value of P
+% The function LevinsonDurbin takes the auto correlation of a signal and the linear prediciton order P
+% as input, and returns an array of the different coefficients for the wanted value of P
 function A = LevinsonDurbin(r,p)
 
 	%Initializes error power stored in r(0) (Matlab 1-indexed)

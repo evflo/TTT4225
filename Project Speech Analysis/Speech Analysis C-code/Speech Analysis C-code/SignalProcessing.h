@@ -2,9 +2,7 @@
 //  Signal Processing.h
 //  Speech Analysis C-code
 //
-//  Created by Even on 05/03/15.
-//  Copyright (c) 2015 Even. All rights reserved.
-//
+
 
 #ifndef __Speech_Analysis_C_code__Signal_Processing__
 #define __Speech_Analysis_C_code__Signal_Processing__
@@ -28,7 +26,5 @@ void upsample(float *xDec, float *x, int N, int D);
 void firFilter(float* coeff,int Ncoeffs, float* x, float* xFiltred, int n);
 
 void findPitchAndVoice(float* y_pitch,int pitchLength,float* pitchProperties,int Fs);
-
-void altLevDeb(float* r, float* A, int P);
 
 #endif /* defined(__Speech_Analysis_C_code__Signal_Processing__) */

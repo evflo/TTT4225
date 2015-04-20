@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
+#include <unistd.h>
 #include "basicVocoder.h"
 #include "RELP.h"
 #include "SignalProcessing.h"
@@ -28,7 +29,16 @@ int main(int argc, const char * argv[]) {
 	}
 	
 	// Add file locations for source and target file
-	if (strcmp(argv[1], "sanntid") == 0){
+	if (strcmp(argv[1], "current") == 0){ // Reads file from current folder
+		char fileDir[1024];
+		getcwd(fileDir, 1024);
+		file = malloc(strlen(fileDir) + 20);
+		outFile = malloc(strlen(fileDir) + 20);
+		strcpy(file, fileDir);
+		strcpy(outFile, fileDir);
+		strcat(file, "/anvsb1.wav");
+		strcat(outFile, "/basic.wav");
+	}else if (strcmp(argv[1], "sanntid") == 0){
 		file = "/home/evenflo/Documents/TTT4240/Project Speech Analysis/anvsb1.wav";
 		outFile = "/home/evenflo/Documents/TTT4240/Project Speech Analysis/basic.wav";
 	}else if (strcmp(argv[1], "evenMac") == 0){

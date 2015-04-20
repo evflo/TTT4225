@@ -2,10 +2,6 @@
 //  RELP.c
 //  Speech Analysis C-code
 //
-//  Created by Even on 05/03/15.
-//  Copyright (c) 2015 Even. All rights reserved.
-//
-
 
 #include "RELP.h"
 //Including the SignalProcessing.h to use the function defined in SignalProcessing.c
@@ -73,64 +69,41 @@ void RELPcoder(float* data, float* output,int length_data,int P, int choice){
         int lastSpeech = i+1-0.015*Fs;
         int nextSpeech = i+0.015*Fs;
        
-       
+		// Select a frame from the signal using Hamming window 
         for (j = 0; j<nextSpeech-lastSpeech; j++) {
             tmp = windowSpeech[j]*data[lastSpeech+j];
             speechFilt[j]= tmp;
         }
         
-        
+        // Finding filter coefficients using LPC
         autocorr(speechFilt, speechLength,ry);
-        
         LevinsonDurbin(ry, A, P);
         
         filtering = filtrate(speechFilt,speechLength ,B, 1, A, P, speechEst);
-        if ((i == Fs*0.03+Fs*0.02*3) || (i == Fs*0.03+Fs*0.02*15) || (i == Fs*0.03+Fs*0.02*30)){
-            printf("speechFilt, i = %d:\n", i);
-            printf("%g, %g, %g\n", speechFilt[0],speechFilt[100], speechFilt[300]);
-            printf("LevinsonDurbin: %g, %g, %g, %g, %g, %g\n", A[0], A[1], A[2], A[7], A[10], A[13]);
-        }
         if(filtering == -1){
             printf("Filtrate function failed: Size of A smaller than 1\n");
             return;
         }
+		// Find prediction error
         for (j=0; j< speechLength; j++) {
             speechError[j] = speechFilt[j]-speechEst[j];
         }
         for(j= 0; j< step;j++){
             syntheticError[i+j-halfStep] = speechError[j+start];
         }
-        if ((i == Fs*0.03+Fs*0.02*3) || (i == Fs*0.03+Fs*0.02*15) || (i == Fs*0.03+Fs*0.02*30)){
-            printf("autocorr, i = %d:\n", i);
-            printf("%g, %g, %g\n", ry[0], ry[100], ry[300]);
-        }
-        if ((i == Fs*0.03+Fs*0.02*3) || (i == Fs*0.03+Fs*0.02*15) || (i == Fs*0.03+Fs*0.02*30)){
-            printf("speechError before filtering, i = %d:\n", i);
-            printf("%g, %g, %g\n", speechError[0],speechError[100], speechError[300]);
-        }
-        if ((i == Fs*0.03+Fs*0.02*3) || (i == Fs*0.03+Fs*0.02*15) || (i == Fs*0.03+Fs*0.02*30)){
-            printf("speechEst, i = %d:\n", i);
-            printf("%g, %g, %g\n", speechEst[0],speechEst[100], speechEst[300]);
-        }
-        //Filtrate speechError
+
+        // Filtrate speechError
         firFilter(coeffLow, filterOrden,speechError,speechErrorFilt,speechLength);
-        //Decimate speechError
-        if ((i == Fs*0.03+Fs*0.02*3) || (i == Fs*0.03+Fs*0.02*15) || (i == Fs*0.03+Fs*0.02*30)){
-            printf("speechErrorFilt, i = %d:\n", i);
-            printf("%g, %g, %g\n", speechErrorFilt[0],speechErrorFilt[100], speechErrorFilt[300]);
-        }
+		
+        // Decimate speechError
         decimate(speechErrorFilt, dataDecimated, speechLength, D); 
-        //Upsample speechError
+		
+        // Upsample speechError
         upsample(dataDecimated, speechError, speechLength, D);
-        if ((i == Fs*0.03+Fs*0.02*3) || (i == Fs*0.03+Fs*0.02*15) || (i == Fs*0.03+Fs*0.02*30)){
-            printf("speechError after upsampling, i = %d:\n", i);
-            printf("%g, %g, %g\n", speechError[0],speechError[100], speechError[300]);
-        }
+       
+		// Low-pass filter the upsampled signal
         firFilter(coeffLow,filterOrden,speechError,LFexcitation,speechLength);
-        if ((i == Fs*0.03+Fs*0.02*3) || (i == Fs*0.03+Fs*0.02*15) || (i == Fs*0.03+Fs*0.02*30)){
-            printf("LFexcitation, i = %d:\n", i);
-            printf("%g, %g, %g\n", LFexcitation[0],LFexcitation[100], LFexcitation[300]);
-        }
+        
         for (j = 0; j < speechLength; j++){
             HFexcitation[j] = LFexcitation[j];
             if (HFexcitation[j] < 0){
@@ -139,17 +112,19 @@ void RELPcoder(float* data, float* output,int length_data,int P, int choice){
         }
         autocorr(HFexcitation,speechLength,ryHF);
         autocorr(LFexcitation,speechLength,ryLF);
+		
+		// Filter the high frequency components using filter coefficients from a low order LPC
         LevinsonDurbin(ry,A_low,low_P);
-        if ((i == Fs*0.03+Fs*0.02*3) || (i == Fs*0.03+Fs*0.02*15) || (i == Fs*0.03+Fs*0.02*30)){
-        printf("A_low for i = %d \n",i );
-        printf("%g %g %g %g %g\n",A_low[0], A_low[1], A_low[2],A_low[3],A_low[4]);
-        }
         filtering = filtrate(HFexcitation,speechLength,B,1,A_low,low_P,HFexcitationLP);
         if(filtering == -1){
             printf("Filtrate function failed: Size of A smaller than 1\n");
             return;
         }
+		
+		// High-pass filter the HF signal 
         firFilter(coeffHigh,filterOrden,HFexcitationLP,HFexcitationFilt,speechLength);
+		
+		// Adjust gain before adding the LF and HF components
         gainHF = 0;
         gainLF = 0;
         for (j = 0; j < speechLength; j++){
@@ -162,25 +137,34 @@ void RELPcoder(float* data, float* output,int length_data,int P, int choice){
         }
         gain = gainLF/gainHF;
 
+		// Add LF and HF components
         for (j = 0; j < speechLength; j++){
             HFexcitationFilt[j] = gain*HFexcitationFilt[j];
             syntheticFullbandResidual[j] = LFexcitation[j] + HFexcitationFilt[j];
         }
+		
+		// Filter the upsampled signal using the LPC coefficients to find RELP with upsampling
         filtering = filtrate(speechError,speechLength,B,1,A,P,speechUpsampling);
         if(filtering == -1){
             printf("Filtrate function failed: Size of A smaller than 1\n");
             return;
         }
+		
+		// Filter the signal obtained through HF regeneration using the LPC coefficients from the first input
         filtering = filtrate(syntheticFullbandResidual,speechLength,B,1,A,P,speechAlgorithm);
         if(filtering == -1){
             printf("Filtrate function failed: Size of A smaller than 1\n");
             return;
         }
+		
         for (j = 0; j< speechLength; j++){
             syntheticSpeechUpsampled[i+j-halfStep] = speechUpsampling[j+start];
             syntheticSpeechHF[i+j-halfStep] = speechAlgorithm[j+start];
         }
     }
+	
+	// choice == 0: Use RELP with upsampling
+	// choice == 1: Use RELP with HF regeneration
     switch (choice){
         case 0:
             for (i = 0; i < length_data; i++){ output[i] = syntheticSpeechUpsampled[i];}
@@ -188,7 +172,10 @@ void RELPcoder(float* data, float* output,int length_data,int P, int choice){
         case 1:
             for (i= 0; i<length_data; i++){ output[i] = syntheticSpeechHF[i];}
             break;
-    }    
+    }
+	
+	// Attempt at making the speech intelligible, amplify everything so average amplitude becomes max amplitude
+	// Clip everything else.
     float maxVal = 0;
     float sum = 0;
     for (i = 0; i < length_data; i++){
@@ -198,7 +185,6 @@ void RELPcoder(float* data, float* output,int length_data,int P, int choice){
 
         }
     }
-    
     for (i = 0; i < length_data; i++){
         if(fabsf(output[i]) >= sum){
             output[i] = output[i] / fabsf(output[i]);// maxVal;
@@ -207,10 +193,7 @@ void RELPcoder(float* data, float* output,int length_data,int P, int choice){
         }
     }
    
-    printf("Max value and average: %g %g\n", maxVal,sum);
-    printf("Error values: %g %g %g\n",syntheticError[1000],syntheticError[5000],syntheticError[10000]);
-    printf("Output(HFregeneration) before gain: %g %g %g\n",syntheticSpeechHF[1000],syntheticSpeechHF[5000],syntheticSpeechHF[10000]);
-    printf("Output(upsample) before gain: %g %g %g\n",output[1000],output[5000],output[10000]);
+	// Free dynamically allocated arrays
     free(syntheticError),free(syntheticSpeechUpsampled),free(syntheticSpeechHF),free(windowSpeech);
     free(dataDecimated), free(speechFilt), free(speechEst),free(speechError),free(speechErrorFilt);
     free(ryLF),free(ryHF),free(A),free(A_low),free(HFexcitation),free(HFexcitationFilt);

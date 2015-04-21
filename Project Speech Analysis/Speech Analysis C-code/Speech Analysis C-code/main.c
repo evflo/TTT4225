@@ -2,7 +2,8 @@
 // This program requires extra arguments to run, the syntax is:
 // $./<prog> <path_keyword> <method>
 // <method> defaults to basic vocoder, but can be changed by "relpUp" or "relpHF"
-// Example: $./test sanntid relpUp
+// <method> is also the name of the output-file
+// Example: $./test current relpUp
 // There is no Makefile, but this project can be compiled by running:
 // $gcc -o test main.c RELP.c basicVocoder.c SignalProcessing.c -lm
 #include <stdio.h>
@@ -29,7 +30,7 @@ int main(int argc, const char * argv[]) {
 	}
 	
 	// Add file locations for source and target file
-	if (strcmp(argv[1], "current") == 0){ // Reads file from current folder
+	if (strcmp(argv[1], "default") == 0){ // Reads "anvsb1.wav" from current folder
 		char fileDir[1024];
 		getcwd(fileDir, 1024);
 		file = malloc(strlen(fileDir) + 20);
@@ -38,21 +39,26 @@ int main(int argc, const char * argv[]) {
 		strcpy(outFile, fileDir);
 		strcat(file, "/anvsb1.wav");
 		strcat(outFile, "/basic.wav");
-	}else if (strcmp(argv[1], "sanntid") == 0){
-		file = "/home/evenflo/Documents/TTT4240/Project Speech Analysis/anvsb1.wav";
-		outFile = "/home/evenflo/Documents/TTT4240/Project Speech Analysis/basic.wav";
-	}else if (strcmp(argv[1], "evenMac") == 0){
-		file = "/Users/even_florenes/GitHub/TTT4240/Project Speech Analysis/anvsb1.wav";
-		outFile = "/Users/even_florenes/GitHub/TTT4240/Project Speech Analysis/basic.wav";
-	}else if (strcmp(argv[1], "evenUbuntu") == 0){
-		file = "/home/parallels/Documents/TTT4240/Project Speech Analysis/anvsb1.wav";
-		outFile = "/home/parallels/Documents/TTT4240/Project Speech Analysis/basic.wav";
-	}else if (strcmp(argv[1], "sanntidBenjamin") == 0){
-		file = "/home/benjamsf/Documents/TTT4240/Project Speech Analysis/anvsb1.wav";
-		outFile = "/home/benjamsf/Documents/TTT4240/Project Speech Analysis/basic.wav";
-	}else if (strcmp(argv[1], "puttyBenjamin") == 0){
-		file = "/home/shomeb/b/benjamsf/Documents/Anvendt/TTT4240/Project Speech Analysis/anvsb1.wav";
-		outFile = "/home/shomeb/b/benjamsf/Documents/Anvendt/TTT4240/Project Speech Analysis/basic.wav";
+	}if (strcmp(argv[1], "new") == 0){ // Select a file from current folder to read
+		char fileDir[1024];
+		char input[100];
+		getcwd(fileDir, 1024);
+		file = malloc(strlen(fileDir) + 20);
+		outFile = malloc(strlen(fileDir) + 20);
+		strcpy(file, fileDir);
+		strcpy(outFile, fileDir);
+		printf("Enter name of source file: ");
+		scanf("%s", input);
+		strcat(file, "/");
+		strcat(outFile, "/");
+		strcat(file, input);
+		if (argc == 3){
+			strcat(outFile, argv[2]);
+			strcat(outFile, ".wav");
+		}else{
+			strcat(outFile, "basic.wav");
+		}
+		printf("%s\n", outFile);
 	}else{
 		printf("Feil argument\n");
 		printf("Husk argument\n");

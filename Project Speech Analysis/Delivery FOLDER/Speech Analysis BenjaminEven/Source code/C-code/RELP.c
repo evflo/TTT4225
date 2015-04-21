@@ -192,26 +192,8 @@ void RELPcoder(float* data, float* output,int length_data,int P, int choice){
             output[i] = output[i]/sum;
         }
     }
-<<<<<<< Updated upstream
    
-<<<<<<< Updated upstream
 	// Free dynamically allocated arrays
-=======
-=======
-    //SNR
-    /*
-    firFilter(coeffLow,filterOrden,output, temp1, length_data);
-
-    for (i = 0; i < length_data; i++){
-        output[i] = temp1[i];
-    }
-    */
->>>>>>> Stashed changes
-    printf("Max value and average: %g %g\n", maxVal,sum);
-    printf("Error values: %g %g %g\n",syntheticError[1000],syntheticError[5000],syntheticError[10000]);
-    printf("Output(HFregeneration) before gain: %g %g %g\n",syntheticSpeechHF[1000],syntheticSpeechHF[5000],syntheticSpeechHF[10000]);
-    printf("Output(upsample) before gain: %g %g %g\n",output[1000],output[5000],output[10000]);
->>>>>>> Stashed changes
     free(syntheticError),free(syntheticSpeechUpsampled),free(syntheticSpeechHF),free(windowSpeech);
     free(dataDecimated), free(speechFilt), free(speechEst),free(speechError),free(speechErrorFilt);
     free(ryLF),free(ryHF),free(A),free(A_low),free(HFexcitation),free(HFexcitationFilt);

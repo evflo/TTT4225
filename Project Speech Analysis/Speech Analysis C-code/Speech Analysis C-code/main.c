@@ -106,7 +106,6 @@ int main(int argc, const char * argv[]) {
 		y[i] = (float) soundData[i]*gainDown;		
 	}
 	float output[wav_length];
-<<<<<<< Updated upstream
 	
 	//Choosing the correct encoding
 	if (argc < 3){	// Default to basic vocoder
@@ -124,30 +123,6 @@ int main(int argc, const char * argv[]) {
 	}
 	
 	// Adjusting gain and converting to integer
-=======
-<<<<<<< Updated upstream
-	basicVocoder(y,output,dataSize/2,14);
-	//RELPcoder(y,output,dataSize/2,14,0);
-	
-=======
-<<<<<<< HEAD
-	//basicVocoder(y,output,dataSize/2,14);
-	//rand_gauss(y,wav_length);
-	RELPcoder(y,output,dataSize/2,14,1);
-	/*
-	hammingWindow(y,wav_length);
-	int i;
-	for (i = 0; i < wav_length; i++){
-		printf("%f\n",y[i]);
-	}*/
-
-=======
-	basicVocoder(y,output,dataSize/2,14);
-	//RELPcoder(y,output,dataSize/2,14,0);
-	
->>>>>>> origin/master
->>>>>>> Stashed changes
->>>>>>> Stashed changes
 	float gainUp = 32760.0;
 	float tmp;
 	for(i=0;i<wav_length;i++){
